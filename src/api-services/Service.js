@@ -1,4 +1,4 @@
-const baseUrl = "https://lac-finance-api.azurewebsites.net";
+const baseUrl = "https://dev-api-lacfinance.azurewebsites.net";
 
 export async function get(url) {
   try {
