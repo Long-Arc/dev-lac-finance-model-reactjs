@@ -80,6 +80,10 @@ const useStyles = (theme) => ({
     fontFamily: "poppins",
     textTransform: "none",
   },
+  exportLink: {
+    color: 'red',
+    textDecoration: 'none'
+  },
 });
 
 const withMediaQuery =
@@ -108,6 +112,7 @@ class Home extends Component {
         email: "",
         password: "",
       },
+      forgot: false,
     };
   }
 
@@ -125,6 +130,12 @@ class Home extends Component {
         console.log(err.message);
       });
   };
+
+  navigate = async (event) => {
+    event.preventDefault();
+    const { history } = this.props;
+    history.push("/home/forgotPassword");
+  }
 
   loginToDashboard = async (event) => {
     event.preventDefault();
@@ -149,7 +160,7 @@ class Home extends Component {
         if (!this.state.password) {
           errors.password = "Please enter correct password";
         }
-        this.setState({ errors, errorMessage: null });
+        this.setState({ errors, errorMessage: "Incorrect credentials!" });
       }
     } else {
       let errors = this.state.errors;
@@ -187,6 +198,10 @@ class Home extends Component {
     }
     this.setState({ errors, [name]: value });
   };
+
+  switchForgot() {
+
+  }
 
   render() {
     const { classes, mediaQuery } = this.props;
@@ -239,12 +254,14 @@ class Home extends Component {
                 <Grid container spacing={0}>
                   <Grid item xs={col3}></Grid>
                   <Grid item xs={6} style={{ marginTop: 25 }}>
-                    <img src={LACLogo} alt="Logo" height="60%" />
+                    <img src={LACLogo} alt="Logo" width="95%"/>
                   </Grid>
                   <Grid item xs={col3}></Grid>
                 </Grid>
               </Grid>
+              { this.state.forgot !== true ? (
               <Grid item xs={6}>
+                <form className="loginForm" onSubmit={this.loginToDashboard}> 
                 <Grid container spacing={2}>
                   <Grid item xs={col6}>
                     <TextField
@@ -260,6 +277,11 @@ class Home extends Component {
                     />
                     {this.state.errors.email.length > 0 && (
                       <span className="error">{this.state.errors.email}</span>
+                    )}
+                    {this.state.errorMessage === "Incorrect Credentials!" && (
+                      <span className="passError">
+                        {this.state.errorMessage}
+                      </span>
                     )}
                   </Grid>
                   <Grid item xs={col6}></Grid>
@@ -281,10 +303,16 @@ class Home extends Component {
                         {this.state.errors.password}
                       </span>
                     )}
+                    {this.state.errorMessage === "Incorrect Credentials" && (
+                      <span className="passError">
+                        {this.state.errorMessage}
+                      </span>
+                    )}
                   </Grid>
                   <Grid item xs={col6}></Grid>
                   <Grid item xs={col6}>
                     <Button
+                      type="submit"
                       fullWidth
                       variant="contained"
                       size="medium"
@@ -301,14 +329,29 @@ class Home extends Component {
                       {this.state.errorMessage}
                     </Grid>
                   )}
-                </Grid>
-              </Grid>
+                  <Grid item xs={col6}>
+                    <Button
+                      type="button"
+                      fullWidth
+                      variant="contained"
+                      size="medium"
+                      className={classes.customButtonPrimary}
+                      color="primary"
+                      onClick={this.navigate}
+                    >
+                      Forgot Password?
+                    </Button>
+                  </Grid>
+                </Grid> 
+                </form>
+              </Grid> ) : null }
             </Grid>
           </div>
         )}
       </div>
     );
   }
+  
 }
 
 export default withRouter(
