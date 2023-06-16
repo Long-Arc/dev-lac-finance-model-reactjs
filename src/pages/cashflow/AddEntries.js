@@ -23,6 +23,7 @@ import {
 import DateFnsUtils from "@date-io/date-fns";
 import { create, update } from "../../api-services/Service";
 import CommonFunc from "../../components/common/CommonFunc";
+import { Autocomplete } from "@material-ui/lab";
 
 const useStyles = makeStyles((theme) => ({
   customButtonPrimary: {
@@ -41,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function AddCashFlow(props) {
+export default function AddEntry(props) {
   const [cashFlowDetails, setCashFlowDetails] = useState({
     RecordId: 0,
     PortCoId: null,
@@ -57,7 +58,9 @@ export default function AddCashFlow(props) {
     fundTypes: props.fundTypes,
     shareClasses: props.shareClasses,
     portCos: props.portCoDetails,
-    disable: true,
+    disablePortco: true,
+    disableFund: true,
+    disableShareClass: true
   });
 
   const [buttonText, setButtonText] = useState('Input Details')
@@ -73,10 +76,6 @@ export default function AddCashFlow(props) {
 
   const matches = useMediaQuery("(min-width:600px)");
   const classes = useStyles();
-  const action =
-    props.cashFlowData && props.cashFlowData.RecordId > 0
-      ? "Update Cash Flow"
-      : "Add Cash Flow";
 
   useEffect(() => {
     if (props.cashFlowData && props.cashFlowData.RecordId > 0) {
@@ -180,7 +179,7 @@ export default function AddCashFlow(props) {
     let input = {
       PortCoId: Number(value),
       FundId: Number(cashFlowDetails.FundId),
-        ShareClassId: Number(cashFlowDetails.ShareClassId),
+        ShareClassId: null,
         startDate:  null,
         endDate: null,
     };
@@ -266,7 +265,7 @@ export default function AddCashFlow(props) {
     let input = {
       PortCoId: Number(cashFlowDetails.PortCoId),
       FundId: Number(value),
-        ShareClassId: Number(cashFlowDetails.ShareClassId),
+        ShareClassId: null,
         startDate:  null,
         endDate: null,
     };
@@ -342,91 +341,6 @@ export default function AddCashFlow(props) {
     setErrors(inputErrors);
   };
 
-  const handleChangeInShareClass = (event) => {
-    const { name, value } = event.target;
-    let inputErrors = errors;
-    setCashFlowDetails({
-      ...cashFlowDetails,
-      [name]: value,
-    });
-    let input = {
-      PortCoId: Number(cashFlowDetails.PortCoId),
-      FundId: Number(cashFlowDetails.FundId),
-        ShareClassId: Number(value),
-        startDate:  null,
-        endDate: null,
-    };
-    create("/cashFlow/searchCashFlows", input).then((response) => {
-      // Assuming the formatted data is stored in an array called 'formattedData'
-      const distinctPorts = [];
-      const distinctFunds = [];
-      const resultPort = [];
-      const resultFund = [];
-  
-      // Iterate over each record in the data array
-      for (let i = 0; i < response.length; i++) {
-        const record = response[i];
-        const portId = record.PortCoId;
-        const fund = record.FundId
-        // Check if the FundId has already been processed
-        if (!distinctPorts.includes(portId)) {
-          // Add the record to the result array
-          resultPort.push(record);
-          // Mark the FundId as processed
-          distinctPorts.push(portId);
-        }
-        if (!distinctFunds.includes(fund)) {
-          // Add the record to the result array
-          resultFund.push(record);
-          // Mark the FundId as processed
-          distinctFunds.push(fund);
-        }
-      }
-  
-      //resultFund.sort((a, b) => a.FundType.localeCompare(b.FundType))
-        resultPort.sort((a, b) => a.PortCoName.localeCompare(b.PortCoName))
-        resultFund.sort((a, b) => a.FundType.localeCompare(b.FundType))  
-        let testPortCos = resultPort.map((resP) => (
-          <MenuItem value={resP.PortCoId}>{resP.PortCoName}</MenuItem>
-        ));
-
-        let testfundTypes = resultFund.map((resFund) => (
-          <MenuItem value={resFund.FundId}>
-            {resFund.FundType}
-          </MenuItem>
-        ));
-
-  // The 'result' array now contains only one row of each distinct fund
-      setCashFlowDetails({
-      ...cashFlowDetails,
-      [name]: value,
-      ["portCos"]: testPortCos,
-      ["fundTypes"]: testfundTypes
-    });
-  });
-
-    switch (name) {
-      case "PortCoId":
-        inputErrors.portCoId =
-          value.length <= 0 ? "Please select portco name" : "";
-        break;
-      case "FundId":
-        inputErrors.fundId = value.length <= 0 ? "Please select fund type" : "";
-        break;
-      case "ShareClassId":
-        inputErrors.shareClassId =
-          value.length <= 0 ? "Please select share class" : "";
-        break;
-      default:
-      // case 'InvEstimatedValue':
-      //     inputErrors.estimatedValue = cashFlowDetails.InvestmentCost.length > 0 && value.length > 0
-      //         ? 'Please enter either investment cost or estimated value' : '';
-      //     break;
-    }
-
-    setErrors(inputErrors);
-  };
-
   const handleDateChange = (date) => {
     if (date) {
       let inputErrors = errors;
@@ -456,7 +370,9 @@ export default function AddCashFlow(props) {
       fundTypes: props.fundTypes,
       shareClasses: props.shareClasses,
       portCos: props.portCoDetails,
-      disable: true
+      disablePortco: true,
+      disableFund: true,
+      disableShareClass: true
     });
 
     setErrors({
@@ -520,9 +436,70 @@ export default function AddCashFlow(props) {
     setButtonText('Input Details');
   };
 
-  const handleUpdates = () => {
-    startAdding();
-    setButtonText('Reset');
+  const handleUpdates1 = (event) => {
+    setCashFlowDetails({
+        RecordId: 0,
+        PortCoId: null,
+        FundId: '',
+        ShareClassId: '',
+        Date: null,
+        InvestmentCost: null,
+        InvEstimatedValue: null,
+        CreatedBy: null,
+        CreatedDate: null,
+        ModifiedBy: null,
+        ModifiedDate: null,
+        fundTypes: props.fundTypes,
+        shareClasses: props.shareClasses,
+        portCos: props.portCoDetails,
+        disablePortco: false,
+        disableFund: true,
+        disableShareClass: true
+        });
+  }
+
+  const handleUpdates2 = (event) => {
+    setCashFlowDetails({
+        RecordId: 0,
+        PortCoId: '',
+        FundId: null,
+        ShareClassId: '',
+        Date: null,
+        InvestmentCost: null,
+        InvEstimatedValue: null,
+        CreatedBy: null,
+        CreatedDate: null,
+        ModifiedBy: null,
+        ModifiedDate: null,
+        fundTypes: props.fundTypes,
+        shareClasses: props.shareClasses,
+        portCos: props.portCoDetails,
+        disablePortco: true,
+        disableFund: false,
+        disableShareClass: true
+        });
+  }
+
+  const handleUpdates3 = (event) => {
+    setCashFlowDetails({
+        RecordId: 0,
+        PortCoId: '',
+        FundId: '',
+        ShareClassId: null,
+        Date: null,
+        InvestmentCost: null,
+        InvEstimatedValue: null,
+        CreatedBy: null,
+        CreatedDate: null,
+        ModifiedBy: null,
+        ModifiedDate: null,
+        fundTypes: props.fundTypes,
+        shareClasses: props.shareClasses,
+        portCos: props.portCoDetails,
+        disablePortco: true,
+        disableFund: true,
+        disableShareClass: false
+        });
   }
 
   return (
@@ -548,157 +525,106 @@ export default function AddCashFlow(props) {
               </IconButton>
             </Grid>
           </Grid>
+          {/* <Autocomplete
+        id="free-solo-demo"
+        freeSolo
+        options={cashFlowDetails.fundTypes}
+        renderInput={(params) => <TextField {...params} label="freeSolo" />}
+      /> */}
           <Grid container spacing={2}>
           <Grid item xs={12}>
           <Button 
-              onClick={handleUpdates}
-              fullWidth
+              onClick={handleUpdates1}
+              //fullWidth
+              name="Portfolio"
               color="primary"
+              //disabled={!cashFlowDetails.disablePortco}
               className={classes.customButtonPrimary}
-              //disabled={!cashFlowDetails.disable}
-              size="medium"> {buttonText} </Button>
+              disabled={!cashFlowDetails.disablePortco}
+              size="medium"> Add Portfolio </Button>
               </Grid>
             <Grid item xs={12}>
               <FormControl fullWidth variant="outlined" required size="small">
                 <InputLabel
                   style={{ fontFamily: "poppins" }}
                   id="demo-simple-select-label"
-                  shrink={!cashFlowDetails.PortCoId ? false : true}
+                  shrink={!cashFlowDetails.disablePortco ? true : false}
                 >
                   Portfolio
                 </InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={cashFlowDetails.PortCoId}
-                  label="PortCo Name"
-                  onChange={handleChangeInPortCo}
-                  name="PortCoId"
-                  disabled={cashFlowDetails.disable}
-                >
-                  {cashFlowDetails.portCos}
-                </Select>
+                <TextField
+                    id="demo-simple-select"
+                    value={cashFlowDetails.PortCoId}
+                    onChange={handleChangeInPortCo}
+                    variant='outlined'
+                    disabled={cashFlowDetails.disablePortco}
+                    size='small'
+                    />
               </FormControl>
               {errors.portCoId.length > 0 && (
                 <span className="error">{errors.portCoId}</span>
               )}
             </Grid>
             <Grid item xs={12}>
+          <Button 
+              onClick={handleUpdates2}
+              //fullWidth
+              color="primary"
+              className={classes.customButtonPrimary}
+              disabled={!cashFlowDetails.disableFund}
+              size="medium"> Add Fund </Button>
+              </Grid>
+            <Grid item xs={12}>
               <FormControl fullWidth variant="outlined" required size="small">
                 <InputLabel
                   style={{ fontFamily: "poppins" }}
                   id="demo-simple-select-label"
-                  shrink={!cashFlowDetails.FundId ? false : true}
+                  shrink={!cashFlowDetails.disableFund ? true : false}
                 >
                   Fund
                 </InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={cashFlowDetails.FundId}
-                  label="Fund Type"
-                  onChange={handleChangeInFund}
-                  name="FundId"
-                  disabled={cashFlowDetails.disable}
-                >
-                  {cashFlowDetails.fundTypes}
-                </Select>
+                <TextField
+                    id="demo-simple-select"
+                    value={cashFlowDetails.FundId}
+                    onChange={handleChangeInFund}
+                    variant='outlined'
+                    disabled={cashFlowDetails.disableFund}
+                    size='small'
+                />
               </FormControl>
               {errors.fundId.length > 0 && (
                 <span className="error">{errors.fundId}</span>
               )}
             </Grid>
             <Grid item xs={12}>
+          <Button 
+              onClick={handleUpdates3}
+              //fullWidth
+              color="primary"
+              className={classes.customButtonPrimary}
+              disabled={!cashFlowDetails.disableShareClass}
+              size="medium"> Add Share Class </Button>
+              </Grid>
+            <Grid item xs={12}>
               <FormControl fullWidth variant="outlined" required size="small">
                 <InputLabel
                   style={{ fontFamily: "poppins" }}
                   id="demo-simple-select-label"
-                  shrink={!cashFlowDetails.ShareClassId ? false : true}
+                  shrink={!cashFlowDetails.disableShareClass ? true : false}
                 >
                   Share Class
                 </InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={cashFlowDetails.ShareClassId}
-                  label="Share Class"
-                  onChange={handleChangeInShareClass}
-                  name="ShareClassId"
-                  disabled={cashFlowDetails.disable}
-                >
-                  {cashFlowDetails.shareClasses}
-                </Select>
+                <TextField
+                    id="demo-simple-select"
+                    value={cashFlowDetails.ShareClassId}
+                    onChange={handleChange}
+                    variant='outlined'
+                    disabled={cashFlowDetails.disableShareClass}
+                    size='small'
+                />
               </FormControl>
               {errors.shareClassId.length > 0 && (
                 <span className="error">{errors.shareClassId}</span>
-              )}
-            </Grid>
-            <Grid item xs={12}>
-              <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <KeyboardDatePicker
-                  fullWidth
-                  format="yyyy-MM-dd"
-                  id="dateUpdated"
-                  label="Date"
-                  value={cashFlowDetails.Date}
-                  onChange={handleDateChange}
-                  KeyboardButtonProps={{
-                    "aria-label": "change date",
-                  }}
-                  inputVariant="outlined"
-                  size="small"
-                  required
-                  name="Date"
-                  disabled={cashFlowDetails.disable}
-                />
-              </MuiPickersUtilsProvider>
-              {errors.date.length > 0 && (
-                <span className="error">{errors.date}</span>
-              )}
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                name="InvestmentCost"
-                label="Investment Cost"
-                size="small"
-                onChange={handleChange}
-                noValidate
-                value={cashFlowDetails.InvestmentCost}
-                variant="outlined"
-                style={{ fontFamily: "poppins" }}
-                disabled={
-                  cashFlowDetails.InvEstimatedValue !== null || cashFlowDetails.disable ? true : false
-                }
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">$</InputAdornment>
-                  ),
-                }}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                name="InvEstimatedValue"
-                label="Estimated Value"
-                size="small"
-                onChange={handleChange}
-                noValidate
-                value={cashFlowDetails.InvEstimatedValue}
-                variant="outlined"
-                style={{ fontFamily: "poppins" }}
-                disabled={
-                  cashFlowDetails.InvestmentCost !== null || cashFlowDetails.disable ? true : false
-                }
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">$</InputAdornment>
-                  ),
-                }}
-              />
-              {errors.estimatedValue.length > 0 && (
-                <span className="error">{errors.estimatedValue}</span>
               )}
             </Grid>
           </Grid>
@@ -706,13 +632,13 @@ export default function AddCashFlow(props) {
         <DialogActions style={{ padding: "8px 24px 16px 24px" }}>
           <Button
             fullWidth
-            onClick={addCashFlow}
+            //onClick={addCashFlow}
             color="primary"
             className={classes.customButtonPrimary}
             size="medium"
-            disabled={cashFlowDetails.disable}
+            disabled={cashFlowDetails.disablePortco && cashFlowDetails.disableFund && cashFlowDetails.disableShareClass}
           >
-            {action}
+            Add Entry
           </Button>
         </DialogActions>
       </Dialog>

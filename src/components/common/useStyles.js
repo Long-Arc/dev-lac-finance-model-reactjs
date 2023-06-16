@@ -142,6 +142,10 @@ const useStyles = theme => ({
         zIndex: theme.zIndex.drawer + 1,
         color: '#fff',
     },
+    exportLink: {
+        color: 'white',
+        textDecoration: 'none'
+    }
 });
 
 export {useStyles}

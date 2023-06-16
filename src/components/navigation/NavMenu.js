@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import clsx from 'clsx';
 import {
     Button, AppBar, withStyles, Toolbar, List, CssBaseline, Typography, IconButton,
-    ListItem, ListItemText, Drawer, Tooltip, useMediaQuery, Collapse, Divider
+    ListItem, ListItemText, Drawer, Tooltip, useMediaQuery,
 } from '@material-ui/core';
 import { withRouter } from 'react-router-dom';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -17,6 +17,7 @@ import MergeTypeIcon from '@material-ui/icons/MergeType';
 import ClassIcon from '@material-ui/icons/Class';
 import AppsIcon from '@material-ui/icons/Apps';
 import LACLogo from "../../assets/LACLogo2.png";
+import { TimelineRounded } from '@material-ui/icons';
 
 const drawerWidth = 240;
 
@@ -181,6 +182,13 @@ class NavMenu extends Component {
         if (history) history.push('/home/cashflowdetails');
     }
 
+    redirectToCashFlowHistory = (event) => {
+        event.preventDefault();
+        this.hideNavBar();
+        const { history } = this.props;
+        if (history) history.push('/home/cashflowhistory');
+    }
+
     redirectToFundTypes = (event) => {
         event.preventDefault();
         this.hideNavBar();
@@ -239,7 +247,7 @@ class NavMenu extends Component {
 
                             {mediaQuery &&
                                 <IconButton aria-label="account of current user" aria-controls="menu-appbar"
-                                    aria-haspopup="true" onClick={this.handleMenu} color="inherit">
+                                    aria-haspopup="true" onClick={this.redirectToUserManagement} color="inherit">
                                     <AccountCircle className={classes.iconColor} />
                                 </IconButton>}
 
@@ -323,6 +331,14 @@ class NavMenu extends Component {
                                 <BubbleChartIcon className="drawerItems" />
                             </Tooltip>
                             <ListItemText className="drawerItemsText"><span style={{ fontFamily: 'poppins' }}>Cash Flow Details</span></ListItemText>
+                        </ListItem>
+
+                        {/* Products Management */}
+                        <ListItem button onClick={this.redirectToCashFlowHistory}>
+                            <Tooltip title="Cash Flow History">
+                                <TimelineRounded className="drawerItems" />
+                            </Tooltip>
+                            <ListItemText className="drawerItemsText"><span style={{ fontFamily: 'poppins' }}>Cash Flow History</span></ListItemText>
                         </ListItem>
 
                         {/* Configurations */}
