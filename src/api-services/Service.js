@@ -51,7 +51,7 @@ export async function create(url, data) {
 
 export async function update(url, data, id) {
   try {
-    const response = await fetch(baseUrl + url + "/" + id, {
+    const response = await fetch(baseUrl + url + "/:" + id, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

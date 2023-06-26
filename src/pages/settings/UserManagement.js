@@ -89,12 +89,16 @@ class UserManagement extends Component {
         if (validateForm(this.state.errors) && this.validateAllInputs()) {
             this.setState({ loading: true });
             let newUser = {};            
-            newUser.UserId = this.state.userId;
-            newUser.FullName = this.state.fullName;
-            newUser.Email = this.state.email;
-            newUser.MobileNo = this.state.mobileNo;
-            newUser.Role = this.state.role;
+            newUser.UserId = 0;
+            newUser.UserName = this.state.fullName;
             newUser.Password = this.state.password;
+            newUser.FirstName = this.state.fullName;
+            newUser.LastName = this.state.fullName;
+            newUser.EmailId = this.state.email;
+            newUser.Active = 1;
+            newUser.DateModified = new Date();
+            //newUser.MobileNo = this.state.mobileNo;
+            //newUser.Role = this.state.role;
             this.createUser(newUser);
         } else {
             let errors = this.state.errors;
@@ -218,24 +222,19 @@ class UserManagement extends Component {
         }
     };
 
-    changeNewpass = () => {
-
-    }
-
     changePass = () => {
         let email = sessionStorage.getItem("loggedInUser");
+        userDetails.EmailID = email;
         console.log(email);
-        console.log(this.state.newpassword);
-        console.log(this.state.confirmnewpassword);
-        console.log(userDetails.Password);
-        userDetails.Password = this.state.newpassword
-        console.log(userDetails.Password);
-        // update("/users/updatePassword", userDetails, email).then(
-        //     (response) => {
-        //       reset();
-        //       props.onAddCashFlow();
-        //     }
-        // );
+        console.log(userDetails.password);
+        console.log(userDetails)
+        update("/users/updatePassword", userDetails, email).then(
+            (response) => {
+            //   reset();
+            //   props.onAddCashFlow();
+            this.loadUsers();
+            }
+        );
     };
 
     render() {
@@ -345,31 +344,6 @@ class UserManagement extends Component {
                             </Grid>
                             <Grid item xs={col6}></Grid>
                             <Grid item xs={col6}>
-                                <TextField
-                                //fullWidth
-                                name="confirm password"
-                                label="Confirm Password"
-                                required
-                                size="small"
-                                onChange={this.handleChange}
-                                noValidate
-                                value={userDetails.confirmnewpassword}
-                                type="password"
-                                variant="outlined"
-                                />
-                                {this.state.errors.password.length > 0 && (
-                                <span className="error">
-                                    {this.state.errors.password}
-                                </span>
-                                )}
-                                {this.state.errorMessage === "Incorrect Credentials" && (
-                                <span className="passError">
-                                    {this.state.errorMessage}
-                                </span>
-                                )}
-                            </Grid>
-                            <Grid item xs={col6}></Grid>
-                            <Grid item xs={col6}>
                                 <Button
                                 type="button"
                                 //fullWidth
@@ -403,31 +377,6 @@ class UserManagement extends Component {
                 value={userDetails.Password}
                 variant="outlined"
                 />
-            </Grid>
-            <Grid item xs={col6}></Grid>
-            <Grid item xs={col6}>
-                <TextField
-                //fullWidth
-                name="confirm password"
-                label="Confirm Password"
-                required
-                size="small"
-                onChange={this.handleChange}
-                noValidate
-                value={userDetails.Password}
-                type="password"
-                variant="outlined"
-                />
-                {this.state.errors.password.length > 0 && (
-                <span className="error">
-                    {this.state.errors.password}
-                </span>
-                )}
-                {this.state.errorMessage === "Incorrect Credentials" && (
-                <span className="passError">
-                    {this.state.errorMessage}
-                </span>
-                )}
             </Grid>
             <Grid item xs={col6}></Grid>
             <Grid item xs={col6}>
