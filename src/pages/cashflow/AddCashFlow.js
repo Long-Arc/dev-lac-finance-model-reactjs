@@ -93,10 +93,17 @@ export default function AddCashFlow(props) {
         cashFlowDetails.CreatedBy = sessionStorage.getItem("loggedInUser");
         cashFlowDetails.CreatedDate = new Date();
         cashFlowDetails.RecordId = null;
-        create("/cashFlow/createCashFlow", cashFlowDetails).then((response) => {
+        const newCashFlowDetails = { ...cashFlowDetails };
+        delete newCashFlowDetails.fundTypes;
+        delete newCashFlowDetails.shareClasses;
+        delete newCashFlowDetails.portCos;
+        delete newCashFlowDetails.disable;
+        create("/cashFlow/createCashFlow", newCashFlowDetails).then((response) => {
+          console.log("here")
           reset();
           props.onAddCashFlow();
         });
+        console.log(newCashFlowDetails)
       } else {
         let id = cashFlowDetails.RecordId;
         //cashFlowDetails.Date = '2020-01-01';
@@ -572,7 +579,7 @@ export default function AddCashFlow(props) {
                   id="demo-simple-select"
                   value={cashFlowDetails.PortCoId}
                   label="PortCo Name"
-                  onChange={handleChangeInPortCo}
+                  onChange={handleChange}
                   name="PortCoId"
                   disabled={cashFlowDetails.disable}
                 >
@@ -597,7 +604,7 @@ export default function AddCashFlow(props) {
                   id="demo-simple-select"
                   value={cashFlowDetails.FundId}
                   label="Fund Type"
-                  onChange={handleChangeInFund}
+                  onChange={handleChange}
                   name="FundId"
                   disabled={cashFlowDetails.disable}
                 >
@@ -622,7 +629,7 @@ export default function AddCashFlow(props) {
                   id="demo-simple-select"
                   value={cashFlowDetails.ShareClassId}
                   label="Share Class"
-                  onChange={handleChangeInShareClass}
+                  onChange={handleChange}
                   name="ShareClassId"
                   disabled={cashFlowDetails.disable}
                 >

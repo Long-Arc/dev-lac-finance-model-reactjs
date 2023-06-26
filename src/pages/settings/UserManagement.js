@@ -47,7 +47,7 @@ class UserManagement extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            userId: 0, fullName: null, email: null, mobileNo: null, role: '0', password: null, newpassword: null, confirmnewpassword: null,
+            userId: 3, fullName: null, email: null, mobileNo: null, role: '0', password: null, newpassword: null, confirmnewpassword: null,
             errorMessage: null, loading: false, actionName: 'CREATE',
             errors: {
                 fullName: '',
@@ -60,7 +60,7 @@ class UserManagement extends Component {
                 { headerName: 'First Name', field: 'FirstName', cellStyle: { 'text-align': "center" } },
                 { headerName: 'Mobile No', field: 'MobileNo', cellStyle: { 'text-align': "center" } },                
                 { headerName: 'Email', field: 'EmailId', cellStyle: { 'text-align': "center" } },
-                { headerName: 'Password', /*field: 'Password',*/ cellStyle: { 'text-align': "center" } },
+                { headerName: 'Password', field: 'Password', cellStyle: { 'text-align': "center" } },
                 { headerName: 'Role', field: 'Role', cellStyle: { 'text-align': "center" } },
                 { headerName: 'Actions', field: 'Actions', sorting: false, filter: false, cellRenderer: 'actionRenderer', cellStyle: { 'text-align': "center" } },
             ],
@@ -82,10 +82,6 @@ class UserManagement extends Component {
         else{
             return false;
         }
-    }
-
-    sendEmail = () => {
-
     }
 
     create = (event) => {
@@ -175,7 +171,8 @@ class UserManagement extends Component {
     }
 
     createUser(newUser) {
-        create('/users/createUser', newUser.userDetails).then((response) => {
+        console.log(newUser)
+        create("/users/createUser", newUser).then((response) => {
         console.log(response)
         this.loadUsers()
         })
@@ -250,9 +247,9 @@ class UserManagement extends Component {
         
         return (
             <Layout>
-                <h2 className="header-text-color">User Management</h2>
-                <EmailContactForm></EmailContactForm>
-                { sessionStorage.getItem("loggedInUser") !== "financedev@longarc.com" ? ( 
+                {/* <h2 className="header-text-color">User Management</h2>
+                <EmailContactForm></EmailContactForm> */}
+                { sessionStorage.getItem("loggedInUser") === "financedev@longarc.com" ? ( 
             <div>
                 {this.state.loading ? (
                     <Loader />
@@ -261,9 +258,9 @@ class UserManagement extends Component {
                         <form onSubmit={this.loginToDashboard} noValidate>
                             <h2 className="header-text-color">User Management</h2>
                             <Grid container spacing={3}>
-                                <Grid item xs={col10}>
+                                {/* <Grid item xs={col10}>
                                     <EmailContactForm></EmailContactForm>
-                                </Grid>
+                                </Grid> */}
                                 <Grid item xs={col10}></Grid>
                                 <Grid item xs={col6}>
                                     <TextField fullWidth required="true" name="fullName" id="txtFullName" label="Full Name"
@@ -312,7 +309,7 @@ class UserManagement extends Component {
                                 </Grid>
                                 <Grid item xs={col2}>
                                 <Button fullWidth className={classes.root} variant="contained"
-                                        color="primary" onClick={this.sendEmail}>
+                                        color="primary" onClick={this.create}>
                                         <CreateIcon className={classes.leftIcon} />{ this.state.actionName }</Button>
                                 </Grid>
                             </Grid>

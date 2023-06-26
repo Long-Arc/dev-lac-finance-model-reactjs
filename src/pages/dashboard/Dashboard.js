@@ -81,7 +81,7 @@ class Dashboard extends Component {
                   visible: false
                 }
               },
-              background: models.BackgroundType.Transparent,
+              //background: models.BackgroundType.Transparent,
             }
           }}
 
