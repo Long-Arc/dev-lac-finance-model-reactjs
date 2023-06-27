@@ -209,7 +209,7 @@ class CashFlowHistory extends Component {
   };
 
   getCashFlowDetails = () => {
-    get("/cashFlow").then((response) => {
+    get("/cashFlowHistory").then((response) => {
       const formattedData = response.map((data) => {
         return {
           ...data,

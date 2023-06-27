@@ -981,7 +981,7 @@ handleChangeInShareClass = (event) => {
                 Search
               </Button>
             </Grid>
-            <Grid item>
+            {/* <Grid item>
               <Button
                 fullWidth
                 className={classes.customButtonPrimary}
@@ -992,7 +992,7 @@ handleChangeInShareClass = (event) => {
               >
                 Add Entry
               </Button>
-            </Grid>
+            </Grid> */}
           </Grid>
           <Grid container spacing={0}>
             <Grid item xs={12}>

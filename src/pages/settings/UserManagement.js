@@ -58,9 +58,9 @@ class UserManagement extends Component {
             },
             columnDefs: [
                 { headerName: 'First Name', field: 'FirstName', cellStyle: { 'text-align': "center" } },
-                { headerName: 'Mobile No', field: 'MobileNo', cellStyle: { 'text-align': "center" } },                
+               /* { headerName: 'Mobile No', field: 'MobileNo', cellStyle: { 'text-align': "center" } }, */               
                 { headerName: 'Email', field: 'EmailId', cellStyle: { 'text-align': "center" } },
-                { headerName: 'Password', field: 'Password', cellStyle: { 'text-align': "center" } },
+               /* { headerName: 'Password', field: 'Password', cellStyle: { 'text-align': "center" } },*/
                 { headerName: 'Role', field: 'Role', cellStyle: { 'text-align': "center" } },
                 { headerName: 'Actions', field: 'Actions', sorting: false, filter: false, cellRenderer: 'actionRenderer', cellStyle: { 'text-align': "center" } },
             ],
@@ -76,7 +76,7 @@ class UserManagement extends Component {
     }
 
     validateAllInputs(){
-        if(this.state.fullName && this.state.email && this.state.mobileNo && this.state.role && this.state.password) {
+        if(this.state.fullName && this.state.email && this.state.password) {
                 return true;
         }
         else{
@@ -89,7 +89,6 @@ class UserManagement extends Component {
         if (validateForm(this.state.errors) && this.validateAllInputs()) {
             this.setState({ loading: true });
             let newUser = {};            
-            newUser.UserId = 0;
             newUser.UserName = this.state.fullName;
             newUser.Password = this.state.password;
             newUser.FirstName = this.state.fullName;
@@ -228,7 +227,7 @@ class UserManagement extends Component {
         console.log(email);
         console.log(userDetails.password);
         console.log(userDetails)
-        update("/users/updatePassword", userDetails, email).then(
+        update("/users/updatePassword/:email", userDetails, email).then(
             (response) => {
             //   reset();
             //   props.onAddCashFlow();
@@ -262,7 +261,7 @@ class UserManagement extends Component {
                                 </Grid> */}
                                 <Grid item xs={col10}></Grid>
                                 <Grid item xs={col6}>
-                                    <TextField fullWidth required="true" name="fullName" id="txtFullName" label="Full Name"
+                                    <TextField fullWidth required="true" name="fullName" id="txtFullName" label="First Name"
                                         onChange={this.handleChange} noValidate value={this.state.fullName} 
                                         InputLabelProps={{ shrink: true, style: { fontSize: 18 } }}/>
                                     {this.state.errors.fullName.length > 0 &&
@@ -277,13 +276,13 @@ class UserManagement extends Component {
                                 </Grid>                                
                             </Grid>
                             <Grid container spacing={3}>
-                                <Grid item xs={col4}>
+                                {/* <Grid item xs={col4}>
                                 <TextField fullWidth required="true" name="mobileNo" id="txtMobileNo" label="Mobile Number"
                                         onChange={this.handleChange} noValidate value={this.state.mobileNo} 
                                         InputLabelProps={{ shrink: true, style: { fontSize: 18 } }}/>
                                         {this.state.errors.mobileNo.length > 0 &&
                                         <span className='error'>{this.state.errors.mobileNo}</span>}
-                                </Grid>
+                                </Grid> */}
                                 <Grid item xs={col4}>
                                 <TextField fullWidth required="true" name="password" id="txtPassword" label="Password"
                                         onChange={this.handleChange} noValidate value={this.state.password} 
@@ -291,7 +290,7 @@ class UserManagement extends Component {
                                         {this.state.errors.password.length > 0 &&
                                         <span className='error'>{this.state.errors.password}</span>}
                                 </Grid>
-                                <Grid item xs={col4}>
+                                {/* <Grid item xs={col4}>
                                 <Select fullWidth id="ddlRole" value={this.state.role} className="selectTopMargin"
                                         onChange={ (e)=> this.onRoleChanged(e) }>
                                         <MenuItem value="0">Choose Role</MenuItem>
@@ -301,7 +300,7 @@ class UserManagement extends Component {
                                     </Select>
                                     {this.state.errors.role.length > 0 &&
                                         <span className='error'>{this.state.errors.role}</span>}
-                                </Grid>
+                                </Grid> */}
                             </Grid>
                             <Grid container spacing={3}>
                                 <Grid item xs={col10}>                                    
@@ -327,7 +326,7 @@ class UserManagement extends Component {
                                 </div>
                             </Grid>                        
                         </Grid>
-                        <h3 className="header-text-color">Change Password</h3>
+                        {/* <h3 className="header-text-color">Change Password</h3>
                             <Grid container spacing={2}>
                             <Grid item xs={col6}>
                                 <TextField
@@ -357,44 +356,45 @@ class UserManagement extends Component {
                                 </Button>
                             </Grid>
                             <Grid item xs={col6}></Grid>
-                            </Grid>
+                            </Grid> */}
                     </div>
                     )}
             </div> ) :  
-            <div>
-            {/* <h2 className="header-text-color">User Management</h2> */}
-            <h3 className="header-text-color">Change Password</h3>
-            <Grid container spacing={2}>
-            <Grid item xs={col6}>
-                <TextField
-                //fullWidth
-                name="new password"
-                label="New Password"
-                required
-                size="small"
-                onChange={this.handleChange}
-                noValidate
-                value={userDetails.Password}
-                variant="outlined"
-                />
-            </Grid>
-            <Grid item xs={col6}></Grid>
-            <Grid item xs={col6}>
-                <Button
-                type="button"
-                //fullWidth
-                variant="contained"
-                size="medium"
-                className={classes.customButtonPrimary}
-                color="primary"
-                onClick={this.changePass}
-                >
-                Change Password
-                </Button>
-            </Grid>
-            <Grid item xs={col6}></Grid>
-            </Grid>
-            </div>
+            // <div>
+            // <h2 className="header-text-color">User Management</h2>
+            // <h3 className="header-text-color">Change Password</h3>
+            // <Grid container spacing={2}>
+            // <Grid item xs={col6}>
+            //     <TextField
+            //     //fullWidth
+            //     name="new password"
+            //     label="New Password"
+            //     required
+            //     size="small"
+            //     onChange={this.handleChange}
+            //     noValidate
+            //     value={userDetails.Password}
+            //     variant="outlined"
+            //     />
+            // </Grid>
+            // <Grid item xs={col6}></Grid>
+            // <Grid item xs={col6}>
+            //     <Button
+            //     type="button"
+            //     //fullWidth
+            //     variant="contained"
+            //     size="medium"
+            //     className={classes.customButtonPrimary}
+            //     color="primary"
+            //     onClick={this.changePass}
+            //     >
+            //     Change Password
+            //     </Button>
+            // </Grid>
+            // <Grid item xs={col6}></Grid>
+            // </Grid>
+            // </div>
+            null
             }
             </Layout>
         );

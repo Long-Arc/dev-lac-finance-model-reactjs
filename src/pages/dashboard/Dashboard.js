@@ -10,6 +10,7 @@ import { PowerBIEmbed } from 'powerbi-client-react';
 import { models } from 'powerbi-client';
 import reportData from '../../components/configs/PowerBIReport.json'
 import { create } from "../../api-services/Service";
+import Layout from "../../components/navigation/Layout";
 
 const withMediaQuery =
   (...args) =>
@@ -66,6 +67,7 @@ class Dashboard extends Component {
 
   render() {
     return (
+      <Layout>
       <Fragment>
         <PowerBIEmbed
           embedConfig={{
@@ -99,6 +101,7 @@ class Dashboard extends Component {
           }}
         />
       </Fragment>
+      </Layout>
     );
   }
 }

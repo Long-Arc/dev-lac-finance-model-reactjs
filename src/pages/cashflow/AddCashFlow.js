@@ -579,7 +579,7 @@ export default function AddCashFlow(props) {
                   id="demo-simple-select"
                   value={cashFlowDetails.PortCoId}
                   label="PortCo Name"
-                  onChange={handleChange}
+                  onChange={handleChangeInPortCo}
                   name="PortCoId"
                   disabled={cashFlowDetails.disable}
                 >
@@ -604,7 +604,7 @@ export default function AddCashFlow(props) {
                   id="demo-simple-select"
                   value={cashFlowDetails.FundId}
                   label="Fund Type"
-                  onChange={handleChange}
+                  onChange={handleChangeInFund}
                   name="FundId"
                   disabled={cashFlowDetails.disable}
                 >
@@ -629,7 +629,7 @@ export default function AddCashFlow(props) {
                   id="demo-simple-select"
                   value={cashFlowDetails.ShareClassId}
                   label="Share Class"
-                  onChange={handleChange}
+                  onChange={handleChangeInShareClass}
                   name="ShareClassId"
                   disabled={cashFlowDetails.disable}
                 >

@@ -324,11 +324,6 @@ class Home extends Component {
                     </Button>
                   </Grid>
                   <Grid item xs={col6}></Grid>
-                  {this.state.errorMessage && (
-                    <Grid item xs={col6} className="error-main">
-                      {this.state.errorMessage}
-                    </Grid>
-                  )}
                   <Grid item xs={col6}>
                     <Button
                       type="button"
@@ -342,6 +337,12 @@ class Home extends Component {
                       Forgot Password?
                     </Button>
                   </Grid>
+                  <Grid item xs={col6}></Grid>
+                  {this.state.errorMessage && (
+                    <Grid item xs={col6} className="error-main">
+                      {this.state.errorMessage}
+                    </Grid>
+                  )}
                 </Grid> 
                 </form>
               </Grid> ) : null }

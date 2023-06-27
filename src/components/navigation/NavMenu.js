@@ -183,31 +183,31 @@ class NavMenu extends Component {
     }
 
     redirectToCashFlowHistory = (event) => {
-        event.preventDefault();
-        this.hideNavBar();
-        const { history } = this.props;
-        if (history) history.push('/home/cashflowhistory');
+        // event.preventDefault();
+        // this.hideNavBar();
+        // const { history } = this.props;
+        // if (history) history.push('/home/cashflowhistory');
     }
 
     redirectToFundTypes = (event) => {
-        event.preventDefault();
-        this.hideNavBar();
-        const { history } = this.props;
-        if (history) history.push('/home/fundtypes');
+        // event.preventDefault();
+        // this.hideNavBar();
+        // const { history } = this.props;
+        // if (history) history.push('/home/fundtypes');
     }
 
     redirectToPortCo = (event) => {
-        event.preventDefault();
-        this.hideNavBar();
-        const { history } = this.props;
-        if (history) history.push('/home/portco');
+        // event.preventDefault();
+        // this.hideNavBar();
+        // const { history } = this.props;
+        // if (history) history.push('/home/portco');
     }
 
     redirectToShareClass = (event) => {
-        event.preventDefault();
-        this.hideNavBar();
-        const { history } = this.props;
-        if (history) history.push('/home/shareclass');
+        // event.preventDefault();
+        // this.hideNavBar();
+        // const { history } = this.props;
+        // if (history) history.push('/home/shareclass');
     }
 
     redirectToUserManagement = (event) => {

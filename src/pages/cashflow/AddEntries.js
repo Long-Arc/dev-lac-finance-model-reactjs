@@ -84,35 +84,31 @@ export default function AddEntry(props) {
   }, [props.cashFlowData.RecordId, setCashFlowDetails, cashFlowDetails.disable]);
 
   const addCashFlow = () => {
-    if (CommonFunc.validateForm(errors) && validateAllInputs()) {
       cashFlowDetails.ModifiedBy = sessionStorage.getItem("loggedInUser");
       cashFlowDetails.ModifiedDate = new Date();
-
-      if (cashFlowDetails.RecordId === 0) {
-        cashFlowDetails.CreatedBy = sessionStorage.getItem("loggedInUser");
-        cashFlowDetails.CreatedDate = new Date();
-        cashFlowDetails.RecordId = null;
-        create("/cashFlow/createCashFlow", cashFlowDetails).then((response) => {
-          reset();
-          props.onAddCashFlow();
-        });
-      } else {
-        let id = cashFlowDetails.RecordId;
-        //cashFlowDetails.Date = '2020-01-01';
-        delete cashFlowDetails.RecordId;
-        delete cashFlowDetails.FundType;
-        delete cashFlowDetails.PortCoName;
-        delete cashFlowDetails.ShareClass;
-        update("/cashFlow/updateCashFlow", cashFlowDetails, id).then(
-          (response) => {
-            reset();
-            props.onAddCashFlow();
-          }
-        );
-      }
-    } else {
-      showInputErrors();
-    }
+      cashFlowDetails.CreatedBy = sessionStorage.getItem("loggedInUser");
+      cashFlowDetails.CreatedDate = new Date();
+      cashFlowDetails.RecordId = null;
+      cashFlowDetails.InvestmentCost = 0;
+      // create("/cashFlow/createCashFlow", cashFlowDetails).then((response) => {
+      //   reset();
+      //   props.onAddCashFlow();
+      // });
+      console.log(cashFlowDetails);
+      // } else {
+      //   let id = cashFlowDetails.RecordId;
+      //   //cashFlowDetails.Date = '2020-01-01';
+      //   delete cashFlowDetails.RecordId;
+      //   delete cashFlowDetails.FundType;
+      //   delete cashFlowDetails.PortCoName;
+      //   delete cashFlowDetails.ShareClass;
+      //   update("/cashFlow/updateCashFlow", cashFlowDetails, id).then(
+      //     (response) => {
+      //       reset();
+      //       props.onAddCashFlow();
+      //     }
+      //   );
+      // }
   };
 
   const showInputErrors = () => {
@@ -632,7 +628,7 @@ export default function AddEntry(props) {
         <DialogActions style={{ padding: "8px 24px 16px 24px" }}>
           <Button
             fullWidth
-            //onClick={addCashFlow}
+            onClick={addCashFlow}
             color="primary"
             className={classes.customButtonPrimary}
             size="medium"
