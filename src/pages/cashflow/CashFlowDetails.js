@@ -345,7 +345,7 @@ class CashFlowDetails extends Component {
   }
 
   editRowData = (row) => {
-    this.setState({ open: true, cashFlowData: row });
+    //this.setState({ open: true, cashFlowData: row });
   };
 
   deleteRowData = (row) => {
