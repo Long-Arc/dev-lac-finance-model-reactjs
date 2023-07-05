@@ -9,6 +9,11 @@ import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 import ActionRenderer from '../../components/common/ActionRenderer';
 import CreateIcon from '@material-ui/icons/Create';
 import { useStyles } from '../../components/common/useStyles';
+import { useState } from 'react';
+import { update, reset, get, create } from '../../api-services/Service';
+import { NotificationContainer } from 'react-notifications';
+import Layout from '../../components/navigation/Layout';
+import EmailContactForm from '../cashflow/EmailContactForm';
 
 const withMediaQuery = (...args) => Component => props => {
     const mediaQuery = useMediaQuery(...args);    
@@ -25,13 +30,24 @@ const validateForm = (errors) => {
     return valid;
 }
 
+const userDetails = {
+    UserId: 0,
+    Username: null,
+    Password: null,
+    FirstName: null,
+    LastName: null,
+    EmailID: null,
+    Active: 1,
+    DateModified: null
+  };
+
 const validEmailRegex = RegExp(/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i);
 
 class UserManagement extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            userId: 0, fullName: null, email: null, mobileNo: null, role: '0', password: null,
+            userId: 3, fullName: null, email: null, mobileNo: null, role: '0', password: null, newpassword: null, confirmnewpassword: null,
             errorMessage: null, loading: false, actionName: 'CREATE',
             errors: {
                 fullName: '',
@@ -41,10 +57,10 @@ class UserManagement extends Component {
                 password: '',
             },
             columnDefs: [
-                { headerName: 'Full Name', field: 'FullName', cellStyle: { 'text-align': "center" } },
-                { headerName: 'Mobile No', field: 'MobileNo', cellStyle: { 'text-align': "center" } },                
-                { headerName: 'Email', field: 'Email', cellStyle: { 'text-align': "center" } },
-                { headerName: 'Password', field: 'Password', cellStyle: { 'text-align': "center" } },
+                { headerName: 'First Name', field: 'FirstName', cellStyle: { 'text-align': "center" } },
+               /* { headerName: 'Mobile No', field: 'MobileNo', cellStyle: { 'text-align': "center" } }, */               
+                { headerName: 'Email', field: 'EmailId', cellStyle: { 'text-align': "center" } },
+               /* { headerName: 'Password', field: 'Password', cellStyle: { 'text-align': "center" } },*/
                 { headerName: 'Role', field: 'Role', cellStyle: { 'text-align': "center" } },
                 { headerName: 'Actions', field: 'Actions', sorting: false, filter: false, cellRenderer: 'actionRenderer', cellStyle: { 'text-align': "center" } },
             ],
@@ -60,7 +76,7 @@ class UserManagement extends Component {
     }
 
     validateAllInputs(){
-        if(this.state.fullName && this.state.email && this.state.mobileNo && this.state.role && this.state.password) {
+        if(this.state.fullName && this.state.email && this.state.password) {
                 return true;
         }
         else{
@@ -73,12 +89,15 @@ class UserManagement extends Component {
         if (validateForm(this.state.errors) && this.validateAllInputs()) {
             this.setState({ loading: true });
             let newUser = {};            
-            newUser.UserId = this.state.userId;
-            newUser.FullName = this.state.fullName;
-            newUser.Email = this.state.email;
-            newUser.MobileNo = this.state.mobileNo;
-            newUser.Role = this.state.role;
+            newUser.UserName = this.state.fullName;
             newUser.Password = this.state.password;
+            newUser.FirstName = this.state.fullName;
+            newUser.LastName = this.state.fullName;
+            newUser.EmailId = this.state.email;
+            newUser.Active = 1;
+            newUser.DateModified = new Date();
+            //newUser.MobileNo = this.state.mobileNo;
+            //newUser.Role = this.state.role;
             this.createUser(newUser);
         } else {
             let errors = this.state.errors;
@@ -102,11 +121,16 @@ class UserManagement extends Component {
     }
 
     loadUsers(){
-        let partialUrl //= api.URL;
-        fetch(partialUrl + 'Home/GetUsers')
-            .then(res => res.json())
-            .then(result => this.setState({ rowData: result, loading: false }))
-            .catch(err => console.log(err));
+        get("/users").then((response) => {
+            const formattedData = response.map((fdata) => {
+                return {
+                    ...fdata,
+                  Email: fdata.EmailID,
+                };
+            });
+            this.setState({ rowData: formattedData, loading: false });
+            console.log(response)
+        });
     }
 
     DeleteRecord(){
@@ -124,7 +148,7 @@ class UserManagement extends Component {
         let loggedInUser = sessionStorage.getItem('loggedInUser');
 
         if(loggedInUser) {
-            this.setState({ loading: true })
+            this.setState({ loading: false })
             this.loadUsers();
         } else {
             const { history } = this.props;
@@ -150,33 +174,19 @@ class UserManagement extends Component {
     }
 
     createUser(newUser) {
-        let partialUrl //= api.URL;
-        fetch(partialUrl + 'Home/CreateUser', {
-            method: 'POST',
-            mode: 'cors',
-            body: JSON.stringify(newUser),
-            headers: { 'Content-Type': 'application/json' }
-        }).then((response) => response.json())
-            .then((responseJson) => {
-                if (responseJson) {
-                    this.loadUsers();
-                    this.setState({ 
-                        loading: false, actionName: 'CREATE', userId: 0, fullName: null, email: null, mobileNo: null, role: '0', password: null,
-                    });
-                } else {
-                    this.setState({ 
-                        loading: false, actionName: 'CREATE', userId: 0, fullName: null, email: null, mobileNo: null, role: '0', password: null,
-                    });
-                    var errorMsg = 'Duplicate user found.';
-                    this.refs.errModalComp.openModal(errorMsg);
-                }
-            })
+        console.log(newUser)
+        create("/users/createUser", newUser).then((response) => {
+        console.log(response)
+        this.loadUsers()
+        })
     }
 
     handleChange = (event) => {
         event.preventDefault();
         const { name, value } = event.target;
         let errors = this.state.errors;
+
+        userDetails.password = value;
 
         switch (name) {
             case 'fullName':
@@ -211,6 +221,21 @@ class UserManagement extends Component {
         }
     };
 
+    changePass = () => {
+        let email = sessionStorage.getItem("loggedInUser");
+        userDetails.EmailID = email;
+        console.log(email);
+        console.log(userDetails.password);
+        console.log(userDetails)
+        update("/users/updatePassword/:email", userDetails, email).then(
+            (response) => {
+            //   reset();
+            //   props.onAddCashFlow();
+            this.loadUsers();
+            }
+        );
+    };
+
     render() {
         const { classes, mediaQuery } = this.props;
         const col6 = mediaQuery ? 6 : 12;
@@ -219,46 +244,54 @@ class UserManagement extends Component {
         const col2 = mediaQuery ? 2 : 12;        
         
         return (
+            <Layout>
+                {/* <h2 className="header-text-color">User Management</h2>
+                <EmailContactForm></EmailContactForm> */}
+                { sessionStorage.getItem("loggedInUser") === "financedev@longarc.com" ? ( 
             <div>
                 {this.state.loading ? (
                     <Loader />
-                ) : (
+                ) : ( 
                     <div>
                         <form onSubmit={this.loginToDashboard} noValidate>
                             <h2 className="header-text-color">User Management</h2>
                             <Grid container spacing={3}>
+                                {/* <Grid item xs={col10}>
+                                    <EmailContactForm></EmailContactForm>
+                                </Grid> */}
+                                <Grid item xs={col10}></Grid>
                                 <Grid item xs={col6}>
-                                    <TextField fullWidth required="true" name="fullName" id="txtFullName" label="Full Name"
+                                    <TextField fullWidth required="true" name="fullName" id="txtFullName" label="First Name"
                                         onChange={this.handleChange} noValidate value={this.state.fullName} 
                                         InputLabelProps={{ shrink: true, style: { fontSize: 18 } }}/>
                                     {this.state.errors.fullName.length > 0 &&
                                         <span className='error'>{this.state.errors.fullName}</span>}
                                 </Grid>
                                 <Grid item xs={col6}>
-                                    <TextField fullWidth required="true" name="email" id="txtEmail" label="Email Address"
+                                <TextField fullWidth required="true" name="email" id="txtEmail" label="Email Address"
                                         onChange={this.handleChange} noValidate value={this.state.email} 
                                         InputLabelProps={{ shrink: true, style: { fontSize: 18 } }}/>
-                                    {this.state.errors.email.length > 0 &&
+                                        {this.state.errors.email.length > 0 &&
                                         <span className='error'>{this.state.errors.email}</span>}
                                 </Grid>                                
                             </Grid>
                             <Grid container spacing={3}>
-                                <Grid item xs={col4}>
-                                    <TextField fullWidth required="true" name="mobileNo" id="txtMobileNo" label="Mobile Number"
+                                {/* <Grid item xs={col4}>
+                                <TextField fullWidth required="true" name="mobileNo" id="txtMobileNo" label="Mobile Number"
                                         onChange={this.handleChange} noValidate value={this.state.mobileNo} 
                                         InputLabelProps={{ shrink: true, style: { fontSize: 18 } }}/>
-                                    {this.state.errors.mobileNo.length > 0 &&
+                                        {this.state.errors.mobileNo.length > 0 &&
                                         <span className='error'>{this.state.errors.mobileNo}</span>}
-                                </Grid>
+                                </Grid> */}
                                 <Grid item xs={col4}>
-                                    <TextField fullWidth required="true" name="password" id="txtPassword" label="Password"
+                                <TextField fullWidth required="true" name="password" id="txtPassword" label="Password"
                                         onChange={this.handleChange} noValidate value={this.state.password} 
                                         InputLabelProps={{ shrink: true, style: { fontSize: 18 } }}/>
-                                    {this.state.errors.password.length > 0 &&
+                                        {this.state.errors.password.length > 0 &&
                                         <span className='error'>{this.state.errors.password}</span>}
                                 </Grid>
-                                <Grid item xs={col4}>
-                                    <Select fullWidth id="ddlRole" value={this.state.role} className="selectTopMargin"
+                                {/* <Grid item xs={col4}>
+                                <Select fullWidth id="ddlRole" value={this.state.role} className="selectTopMargin"
                                         onChange={ (e)=> this.onRoleChanged(e) }>
                                         <MenuItem value="0">Choose Role</MenuItem>
                                         <MenuItem value="Admin">Admin</MenuItem>
@@ -267,22 +300,21 @@ class UserManagement extends Component {
                                     </Select>
                                     {this.state.errors.role.length > 0 &&
                                         <span className='error'>{this.state.errors.role}</span>}
-                                </Grid>
+                                </Grid> */}
                             </Grid>
                             <Grid container spacing={3}>
                                 <Grid item xs={col10}>                                    
                                 </Grid>
                                 <Grid item xs={col2}>
-                                    <Button fullWidth className={classes.root} variant="contained"
+                                <Button fullWidth className={classes.root} variant="contained"
                                         color="primary" onClick={this.create}>
                                         <CreateIcon className={classes.leftIcon} />{ this.state.actionName }</Button>
                                 </Grid>
                             </Grid>
                         </form>
-
                         <Grid container spacing={0}>
                             <Grid item xs={12}>
-                                <div className="ag-theme-alpine" style={{ width: "100%", height: 450, marginTop: 10 }}>
+                            <div className="ag-theme-alpine" style={{ width: "100%", height: 450, marginTop: 10 }}>
                                     <AgGridReact
                                         columnDefs={this.state.columnDefs} rowData={this.state.rowData}
                                         onGridReady={this.onGridReady} defaultColDef={this.state.defaultColDef}
@@ -294,9 +326,77 @@ class UserManagement extends Component {
                                 </div>
                             </Grid>                        
                         </Grid>
+                        {/* <h3 className="header-text-color">Change Password</h3>
+                            <Grid container spacing={2}>
+                            <Grid item xs={col6}>
+                                <TextField
+                                //fullWidth
+                                name="new password"
+                                label="New Password"
+                                required
+                                size="small"
+                                onChange={this.handleChange}
+                                noValidate
+                                value={userDetails.newpassword}
+                                variant="outlined"
+                                />
+                            </Grid>
+                            <Grid item xs={col6}></Grid>
+                            <Grid item xs={col6}>
+                                <Button
+                                type="button"
+                                //fullWidth
+                                variant="contained"
+                                size="medium"
+                                className={classes.customButtonPrimary}
+                                color="primary"
+                                onClick={this.changePass}
+                                >
+                                Change Password
+                                </Button>
+                            </Grid>
+                            <Grid item xs={col6}></Grid>
+                            </Grid> */}
                     </div>
                     )}
-            </div>
+            </div> ) :  
+            // <div>
+            // <h2 className="header-text-color">User Management</h2>
+            // <h3 className="header-text-color">Change Password</h3>
+            // <Grid container spacing={2}>
+            // <Grid item xs={col6}>
+            //     <TextField
+            //     //fullWidth
+            //     name="new password"
+            //     label="New Password"
+            //     required
+            //     size="small"
+            //     onChange={this.handleChange}
+            //     noValidate
+            //     value={userDetails.Password}
+            //     variant="outlined"
+            //     />
+            // </Grid>
+            // <Grid item xs={col6}></Grid>
+            // <Grid item xs={col6}>
+            //     <Button
+            //     type="button"
+            //     //fullWidth
+            //     variant="contained"
+            //     size="medium"
+            //     className={classes.customButtonPrimary}
+            //     color="primary"
+            //     onClick={this.changePass}
+            //     >
+            //     Change Password
+            //     </Button>
+            // </Grid>
+            // <Grid item xs={col6}></Grid>
+            // </Grid>
+            // </div>
+            null
+            }
+            </Layout>
         );
     }
 }
