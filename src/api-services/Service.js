@@ -1,5 +1,5 @@
-const baseUrl = "https://dev-api-lacfinance.azurewebsites.net";
-// const baseUrl = "http://localhost:5000";
+// const baseUrl = "https://dev-api-lacfinance.azurewebsites.net";
+const baseUrl = "http://localhost:5000";
 
 export async function get(url) {
   try {
@@ -19,7 +19,7 @@ export async function get(url) {
 
 export async function searchById(url, id) {
   try {
-    const response = await fetch(baseUrl + url + id, {
+    const response = await fetch(baseUrl + url.replace('email', id), {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

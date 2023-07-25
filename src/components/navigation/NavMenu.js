@@ -152,7 +152,22 @@ class NavMenu extends Component {
             open: false,
             currentStatus: '',
         };
+        this.inactivityTimeout = null;
     }
+
+  // Function to start the inactivity timeout
+  startInactivityTimeout = () => {
+    // Clear any existing timeout to avoid multiple instances
+    if (this.inactivityTimeout) clearTimeout(this.inactivityTimeout);
+
+    // Set the timeout to logout after 30 minutes of inactivity (adjust the time as needed)
+    this.inactivityTimeout = setTimeout(this.logOut, 60 * 60 * 1000); // 60 minutes in milliseconds
+  };
+
+  // Function to clear the inactivity timeout
+  clearInactivityTimeout = () => {
+    if (this.inactivityTimeout) clearTimeout(this.inactivityTimeout);
+  };
 
     handleDrawerOpen = () => {
         this.setState({ open: true })
@@ -161,12 +176,11 @@ class NavMenu extends Component {
         this.setState({ open: false })
     };
 
-    logOut = (event) => {
-        event.preventDefault();
+    logOut = () => {
         sessionStorage.setItem('loggedInUser', '');
         const { history } = this.props;
         if (history) history.push('/Home');
-    }
+      };
 
     hideNavBar() {
         console.log(this.state.open)
@@ -183,10 +197,10 @@ class NavMenu extends Component {
     }
 
     redirectToCashFlowHistory = (event) => {
-        // event.preventDefault();
-        // this.hideNavBar();
-        // const { history } = this.props;
-        // if (history) history.push('/home/cashflowhistory');
+        event.preventDefault();
+        this.hideNavBar();
+        const { history } = this.props;
+        if (history) history.push('/home/cashflowhistory');
     }
 
     redirectToFundTypes = (event) => {
@@ -223,6 +237,24 @@ class NavMenu extends Component {
         const { history } = this.props;
         if (history) history.push('/home/dashboard');
     }
+
+    componentDidMount() {
+        window.addEventListener('mousemove', this.startInactivityTimeout);
+        window.addEventListener('keydown', this.startInactivityTimeout);
+        // Add more event listeners as needed to detect user activity
+    
+        // Start the inactivity timeout when the component mounts
+        this.startInactivityTimeout();
+      }
+    
+      // Clean up the event listeners when the component unmounts
+      componentWillUnmount() {
+        this.clearInactivityTimeout();
+        window.removeEventListener('mousemove', this.startInactivityTimeout);
+        window.removeEventListener('keydown', this.startInactivityTimeout);
+        // Remove any additional event listeners you added during componentDidMount
+      }
+    
 
     render() {
         const { classes, mediaQuery } = this.props;

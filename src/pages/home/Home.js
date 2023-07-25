@@ -108,6 +108,7 @@ class Home extends Component {
       errorMessage: null,
       loading: false,
       token: null,
+      roleId: null,
       errors: {
         email: "",
         password: "",
@@ -123,7 +124,7 @@ class Home extends Component {
     })
       .then((response) => response.json())
       .then((actualData) =>
-        this.setState({ token: actualData.token, loading: false })
+        this.setState({ token: actualData.token, loading: false, roleId: actualData.roleId })
       )
       .catch((err) => {
         this.setState({ token: null });
@@ -323,7 +324,7 @@ class Home extends Component {
                       Login
                     </Button>
                   </Grid>
-                  {/* <Grid item xs={col6}></Grid>
+                  <Grid item xs={col6}></Grid>
                   <Grid item xs={col6}>
                     <Button
                       type="button"
@@ -336,7 +337,7 @@ class Home extends Component {
                     >
                       Forgot Password?
                     </Button>
-                  </Grid> */}
+                  </Grid>
                   <Grid item xs={col6}></Grid>
                   {this.state.errorMessage && (
                     <Grid item xs={col6} className="error-main">

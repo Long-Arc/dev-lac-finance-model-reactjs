@@ -345,7 +345,9 @@ class CashFlowDetails extends Component {
   }
 
   editRowData = (row) => {
+    this.clearSearchInput();
     this.setState({ open: true, cashFlowData: row });
+    console.log(row)
   };
 
   deleteRowData = (row) => {
@@ -1009,7 +1011,7 @@ handleChangeInShareClass = (event) => {
                   context={this.state.context}
                   pagination={true}
                   gridOptions={this.gridOptions}
-                  paginationPageSize={20}
+                  paginationPageSize={50}
                   components={this.state.components}
                   rowClassRules={this.state.rowClassRules}
                   suppressClickEdit={true}

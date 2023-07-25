@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import '../../components/common/Common.css';
-import { Button, TextField, Grid, withStyles, Select, MenuItem, useMediaQuery } from '@material-ui/core';
+import { Button, TextField, Grid, withStyles, Select, MenuItem, useMediaQuery, responsiveFontSizes } from '@material-ui/core';
 import { withRouter } from 'react-router-dom';
 import Loader from '../../components/loader/Loader';
 import { AgGridReact } from 'ag-grid-react';
@@ -10,7 +10,7 @@ import ActionRenderer from '../../components/common/ActionRenderer';
 import CreateIcon from '@material-ui/icons/Create';
 import { useStyles } from '../../components/common/useStyles';
 import { useState } from 'react';
-import { update, reset, get, create } from '../../api-services/Service';
+import { update, reset, get, create, searchById } from '../../api-services/Service';
 import { NotificationContainer } from 'react-notifications';
 import Layout from '../../components/navigation/Layout';
 import EmailContactForm from '../cashflow/EmailContactForm';
@@ -47,7 +47,7 @@ class UserManagement extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            userId: 3, fullName: null, email: null, mobileNo: null, role: '0', password: null, newpassword: null, confirmnewpassword: null,
+            userId: null, fullName: null, email: null, mobileNo: null, role: '0', password: null, newpassword: null, confirmnewpassword: null,
             errorMessage: null, loading: false, actionName: 'CREATE',
             errors: {
                 fullName: '',
@@ -60,7 +60,7 @@ class UserManagement extends Component {
                 { headerName: 'First Name', field: 'FirstName', cellStyle: { 'text-align': "center" } },
                /* { headerName: 'Mobile No', field: 'MobileNo', cellStyle: { 'text-align': "center" } }, */               
                 { headerName: 'Email', field: 'EmailId', cellStyle: { 'text-align': "center" } },
-               /* { headerName: 'Password', field: 'Password', cellStyle: { 'text-align': "center" } },*/
+               { headerName: 'Password', field: 'Password', cellStyle: { 'text-align': "center" } },
                 { headerName: 'Role', field: 'Role', cellStyle: { 'text-align': "center" } },
                 { headerName: 'Actions', field: 'Actions', sorting: false, filter: false, cellRenderer: 'actionRenderer', cellStyle: { 'text-align': "center" } },
             ],
@@ -222,17 +222,39 @@ class UserManagement extends Component {
     };
 
     changePass = () => {
-        let email = sessionStorage.getItem("loggedInUser");
-        userDetails.EmailID = email;
-        console.log(email);
-        console.log(userDetails.password);
-        console.log(userDetails)
-        update("/users/updatePassword/:email", userDetails, email).then(
+        let userId
+        let email = sessionStorage.getItem("loggedInUser")
+        searchById("/users/getUserByUserName?userName=email", email).then(
             (response) => {
-            //   reset();
-            //   props.onAddCashFlow();
-            this.loadUsers();
-            }
+                console.log(response)
+                userId = response.UserId;
+                console.log(userId)
+                const newData = { ...userDetails };
+
+                // Remove unnecessary fields from the copied data
+                delete newData.UserId;
+                delete newData.Username;
+                delete newData.FirstName;
+                delete newData.LastName;
+                delete newData.EmailID;
+                delete newData.Active;
+                delete newData.DateModified;
+                // The new JSON object containing only the "password" field
+                const newPasswordData = {
+                Password: newData.password
+                };
+                update("/users/updatePassword/email", newPasswordData, userId).then(
+                    (response) => {
+                    this.loadUsers();
+                    }
+                );
+                // this.setState({
+                //     userDetails: {
+                //       ...this.state.userDetails,
+                //       Password: "", // Set it to an empty string to clear the field
+                //     },
+                //   });
+                    } 
         );
     };
 
@@ -326,7 +348,7 @@ class UserManagement extends Component {
                                 </div>
                             </Grid>                        
                         </Grid>
-                        {/* <h3 className="header-text-color">Change Password</h3>
+                        <h3 className="header-text-color">Change Password</h3>
                             <Grid container spacing={2}>
                             <Grid item xs={col6}>
                                 <TextField
@@ -356,45 +378,44 @@ class UserManagement extends Component {
                                 </Button>
                             </Grid>
                             <Grid item xs={col6}></Grid>
-                            </Grid> */}
+                            </Grid>
                     </div>
                     )}
             </div> ) :  
-            // <div>
-            // <h2 className="header-text-color">User Management</h2>
-            // <h3 className="header-text-color">Change Password</h3>
-            // <Grid container spacing={2}>
-            // <Grid item xs={col6}>
-            //     <TextField
-            //     //fullWidth
-            //     name="new password"
-            //     label="New Password"
-            //     required
-            //     size="small"
-            //     onChange={this.handleChange}
-            //     noValidate
-            //     value={userDetails.Password}
-            //     variant="outlined"
-            //     />
-            // </Grid>
-            // <Grid item xs={col6}></Grid>
-            // <Grid item xs={col6}>
-            //     <Button
-            //     type="button"
-            //     //fullWidth
-            //     variant="contained"
-            //     size="medium"
-            //     className={classes.customButtonPrimary}
-            //     color="primary"
-            //     onClick={this.changePass}
-            //     >
-            //     Change Password
-            //     </Button>
-            // </Grid>
-            // <Grid item xs={col6}></Grid>
-            // </Grid>
-            // </div>
-            null
+            <div>
+            <h2 className="header-text-color">User Management</h2>
+            <h3 className="header-text-color">Change Password</h3>
+            <Grid container spacing={2}>
+            <Grid item xs={col6}>
+                <TextField
+                //fullWidth
+                name="new password"
+                label="New Password"
+                required
+                size="small"
+                onChange={this.handleChange}
+                noValidate
+                value={userDetails.Password}
+                variant="outlined"
+                />
+            </Grid>
+            <Grid item xs={col6}></Grid>
+            <Grid item xs={col6}>
+                <Button
+                type="button"
+                //fullWidth
+                variant="contained"
+                size="medium"
+                className={classes.customButtonPrimary}
+                color="primary"
+                onClick={this.changePass}
+                >
+                Change Password
+                </Button>
+            </Grid>
+            <Grid item xs={col6}></Grid>
+            </Grid>
+            </div>
             }
             </Layout>
         );

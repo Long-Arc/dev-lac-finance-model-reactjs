@@ -50,8 +50,12 @@ const ForgotPasswordForm = () => {
       console.log(check)
       console.log(form.current.elements.otp.value)
       if (form.current.elements.code.value === form.current.elements.otp.value) {
-     history.push('/home/resetpassword')
+        // history.push('/home/resetpassword')
+        const userEmail = form.current.elements.user_email.value;
+
+        history.push(`/home/resetpassword?user_email=${userEmail}`);
       } else {
+        
       }
   }
  };

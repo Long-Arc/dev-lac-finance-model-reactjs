@@ -97,7 +97,7 @@ const validEmailRegex = RegExp(
   /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
 );
 
-class Home extends Component {
+class ForgotPassword extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -180,7 +180,30 @@ class Home extends Component {
             { this.state.forgot !== true ? (
             <Grid item xs={6}>
               <Grid item xs={6}>
-              <ForgotPasswordForm></ForgotPasswordForm>
+              {/* <Grid>
+                <form 
+                // ref={form} 
+                // onSubmit={sendEmail}
+                >
+                <Grid>
+                  <TextField fullWidth required="true" size="small" name="user_email" id="txtEmail" label="Email Address"
+                      // disabled={!otp} 
+                      variant="outlined"/>
+                      </Grid>
+                      <Grid></Grid>
+                      <Grid>
+                      <TextField fullWidth required="true" size="small" name="otp" id="text" label="OTP"
+                      // disabled={otp} 
+                      variant="outlined"/>
+                      </Grid>
+                      <Grid item xs={6}></Grid>
+                      <Grid>
+                  <Button type="submit" className={classes.customButtonPrimary} value="Send"> Send otp </Button>
+                  <input type="hidden" name="code" />
+                  </Grid>
+                </form>
+                </Grid> */}
+                <ForgotPasswordForm></ForgotPasswordForm>
               <Button
                     type="button"
                     fullWidth
@@ -204,5 +227,5 @@ class Home extends Component {
 }
 
 export default withRouter(
-  withStyles(useStyles)(withMediaQuery("(min-width:600px)")(Home))
+  withStyles(useStyles)(withMediaQuery("(min-width:600px)")(ForgotPassword))
 );
