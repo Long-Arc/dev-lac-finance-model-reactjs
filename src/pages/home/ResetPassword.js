@@ -202,7 +202,7 @@ import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
   
     render() {
       const { classes, mediaQuery } = this.props;
-      const title = "Long ARC Finance Model";
+      const title = "Long Arc Investment Dashboard";
       const col6 = mediaQuery ? 6 : 12;
       const col3 = mediaQuery ? 6 : 3;
   
@@ -222,7 +222,7 @@ import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
                   <span className="header-font">{title}</span>
                 </Typography>
   
-                <div>
+                {/* <div>
                   <Button
                     color="primary"
                     className={classes.btnText}
@@ -237,7 +237,7 @@ import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
                   >
                     Contact Us
                   </Button>
-                </div>
+                </div> */}
               </Toolbar>
             </AppBar>
           </div>

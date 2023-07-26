@@ -123,7 +123,7 @@ class ForgotPassword extends Component {
 
   render() {
     const { classes, mediaQuery } = this.props;
-    const title = "Long ARC Finance Model";
+    const title = "Long Arc Investment Dashboard";
     const col6 = mediaQuery ? 6 : 12;
     const col3 = mediaQuery ? 6 : 3;
 
@@ -143,7 +143,7 @@ class ForgotPassword extends Component {
                 <span className="header-font">{title}</span>
               </Typography>
 
-              <div>
+              {/* <div>
                 <Button
                   color="primary"
                   className={classes.btnText}
@@ -158,7 +158,7 @@ class ForgotPassword extends Component {
                 >
                   Contact Us
                 </Button>
-              </div>
+              </div> */}
             </Toolbar>
           </AppBar>
         </div>

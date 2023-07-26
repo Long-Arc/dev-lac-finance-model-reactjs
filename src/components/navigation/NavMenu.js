@@ -197,10 +197,12 @@ class NavMenu extends Component {
     }
 
     redirectToCashFlowHistory = (event) => {
+        if (sessionStorage.getItem("loggedInRoleId") == "1") {
         event.preventDefault();
         this.hideNavBar();
         const { history } = this.props;
         if (history) history.push('/home/cashflowhistory');
+        }
     }
 
     redirectToFundTypes = (event) => {

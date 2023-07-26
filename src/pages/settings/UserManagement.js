@@ -58,10 +58,10 @@ class UserManagement extends Component {
             },
             columnDefs: [
                 { headerName: 'First Name', field: 'FirstName', cellStyle: { 'text-align': "center" } },
-               /* { headerName: 'Mobile No', field: 'MobileNo', cellStyle: { 'text-align': "center" } }, */               
+                { headerName: 'Last Name', field: 'LastName', cellStyle: { 'text-align': "center" } },                
                 { headerName: 'Email', field: 'EmailId', cellStyle: { 'text-align': "center" } },
-               { headerName: 'Password', field: 'Password', cellStyle: { 'text-align': "center" } },
-                { headerName: 'Role', field: 'Role', cellStyle: { 'text-align': "center" } },
+              /* { headerName: 'Password', field: 'Password', cellStyle: { 'text-align': "center" } },*/
+                { headerName: 'Role', field: 'RoleID', cellStyle: { 'text-align': "center" } },
                 { headerName: 'Actions', field: 'Actions', sorting: false, filter: false, cellRenderer: 'actionRenderer', cellStyle: { 'text-align': "center" } },
             ],
             context: { componentParent: this },
@@ -88,13 +88,16 @@ class UserManagement extends Component {
         event.preventDefault();
         if (validateForm(this.state.errors) && this.validateAllInputs()) {
             this.setState({ loading: true });
-            let newUser = {};            
+            let newUser = {};     
+            const firstName = this.state.fullName.split(' ')[0];
+            const lastName = this.state.fullName.split(' ')[1];       
             newUser.UserName = this.state.fullName;
             newUser.Password = this.state.password;
-            newUser.FirstName = this.state.fullName;
-            newUser.LastName = this.state.fullName;
+            newUser.FirstName = firstName;
+            newUser.LastName = lastName;
             newUser.EmailId = this.state.email;
             newUser.Active = 1;
+            newUser.RoleID = 2;
             newUser.DateModified = new Date();
             //newUser.MobileNo = this.state.mobileNo;
             //newUser.Role = this.state.role;
@@ -269,7 +272,7 @@ class UserManagement extends Component {
             <Layout>
                 {/* <h2 className="header-text-color">User Management</h2>
                 <EmailContactForm></EmailContactForm> */}
-                { sessionStorage.getItem("loggedInUser") === "financedev@longarc.com" ? ( 
+                { sessionStorage.getItem("loggedInRoleId") === "1" ? ( 
             <div>
                 {this.state.loading ? (
                     <Loader />
@@ -383,6 +386,7 @@ class UserManagement extends Component {
                     )}
             </div> ) :  
             <div>
+                {console.log("hi" + sessionStorage.getItem("loggedInRoleId"))}
             <h2 className="header-text-color">User Management</h2>
             <h3 className="header-text-color">Change Password</h3>
             <Grid container spacing={2}>

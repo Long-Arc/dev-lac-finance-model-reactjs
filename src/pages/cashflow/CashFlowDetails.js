@@ -135,7 +135,7 @@ class CashFlowDetails extends Component {
           field: "Actions",
           sortable: false,
           filter: false,
-          cellRenderer:  sessionStorage.getItem("loggedInUser") === "financedev@longarc.com" ? "actionRenderer" : null,
+          cellRenderer:  sessionStorage.getItem("loggedInRoleId") === "1" ? "actionRenderer" : null,
           cellRendererParams: {
             onClick: () => {}, // Empty function to disable click
           },
@@ -829,7 +829,7 @@ handleChangeInShareClass = (event) => {
                 onClick={this.addCashFlowDetails}
                 size="medium"
                 fullWidth
-                disabled={sessionStorage.getItem("loggedInUser") !== "financedev@longarc.com"}
+                disabled={sessionStorage.getItem("loggedInRoleId") !== "1"}
               >
                 Add Cash Flow
               </Button>
