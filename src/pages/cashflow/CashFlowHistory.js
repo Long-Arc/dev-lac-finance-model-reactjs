@@ -209,7 +209,7 @@ class CashFlowHistory extends Component {
   };
 
   getCashFlowDetails = () => {
-    get("/cashFlowHistory").then((response) => {
+    get("/cashFlow").then((response) => {
       const formattedData = response.map((data) => {
         return {
           ...data,
@@ -219,6 +219,51 @@ class CashFlowHistory extends Component {
         };
       });
       this.setState({ rowData: formattedData, loading: false });
+      const distinctPorts = [];
+      const distinctShares = [];
+      const resultPort = [];
+      const resultShare = [];
+      const distinctFunds = [];
+      let resultFund = [];
+      for (let i = 0; i < response.length; i++) {
+        const record = response[i];
+        const portId = record.PortCoId;
+        const share = record.ShareClassId;
+        const fundId = record.FundId;
+        // Check if the FundId has already been processed
+        if (!distinctPorts.includes(portId)) {
+          // Add the record to the result array
+          resultPort.push(record);
+          // Mark the FundId as processed
+          distinctPorts.push(portId);
+        }
+        if (!distinctShares.includes(share)) {
+          // Add the record to the result array
+          resultShare.push(record);
+          // Mark the FundId as processed
+          distinctShares.push(share);
+        }
+        if (!distinctFunds.includes(fundId)) {
+          // Add the record to the result array
+          resultFund.push(record);
+          // Mark the FundId as processed
+          distinctFunds.push(fundId);
+        }
+        resultFund = resultFund.sort();
+      }
+
+      resultFund.sort((a, b) => a.FundType.localeCompare(b.FundType))
+      resultPort.sort((a, b) => a.PortCoName.localeCompare(b.PortCoName))
+      resultShare.sort((a, b) => a.ShareClass.localeCompare(b.ShareClass))
+
+  
+  // The 'result' array now contains only one row of each distinct fund
+      this.setState({ portCoDetails: resultPort, shareClasses: resultShare, fundTypes: resultFund });
+
+      if (this.state.flag) {
+        this.setState({ open: true });
+        this.state.flag = false;
+      }
     });
   };
 
@@ -295,7 +340,7 @@ class CashFlowHistory extends Component {
 
   handleChange = (event) => {
     const { name, value } = event.target;
-  
+    this.setState({ [name]: value });
     if (name === "PortCoId") {
       let input = {
         PortCoId: Number(this.state.PortCoId),
@@ -505,6 +550,153 @@ class CashFlowHistory extends Component {
     this.csvLink.link.click();
   };
 
+  handleChangeInPortCo = (event) => {
+    const { name, value } = event.target;
+    this.setState({ [name]: value });
+    console.log(value)
+    let input = {
+      PortCoId: Number(value),
+      FundId: Number(this.state.FundId),
+      ShareClassId: Number(this.state.ShareClassId),
+      startDate:  null,
+      endDate: null,
+    };
+    console.log(input)
+    create("/cashFlow/searchCashFlows", input).then((response) => {
+      // Assuming the formatted data is stored in an array called 'formattedData'
+      const distinctFunds = [];
+      const distinctShares = [];
+      const resultFund = [];
+      const resultShare = [];
+  
+      // Iterate over each record in the data array
+      for (let i = 0; i < response.length; i++) {
+        const record = response[i];
+        const fundId = record.FundId;
+        const share = record.ShareClassId
+        // Check if the FundId has already been processed
+        if (!distinctFunds.includes(fundId)) {
+          // Add the record to the result array
+          resultFund.push(record);
+          // Mark the FundId as processed
+          distinctFunds.push(fundId);
+        }
+        if (!distinctShares.includes(share)) {
+          // Add the record to the result array
+          resultShare.push(record);
+          // Mark the FundId as processed
+          distinctShares.push(share);
+        }
+      }
+  
+      resultFund.sort((a, b) => a.FundType.localeCompare(b.FundType))
+        //resultPort.sort((a, b) => a.PortCoName.localeCompare(b.PortCoName))
+        resultShare.sort((a, b) => a.ShareClass.localeCompare(b.ShareClass))
+  
+  // The 'result' array now contains only one row of each distinct fund
+      this.setState({ fundTypes: resultFund, shareClasses: resultShare });
+      console.log(this.state.fundTypes)
+    });
+  };
+  
+  handleChangeInFund = (event) => {
+    const { name, value } = event.target;
+    this.setState({ [name]: value });
+    console.log(value)
+    let input = {
+      PortCoId: Number(this.state.PortCoId),
+      FundId: Number(value),
+        ShareClassId: Number(this.state.ShareClassId),
+        startDate:  null,
+        endDate: null,
+    };
+    console.log(input)
+    create("/cashFlow/searchCashFlows", input).then((response) => {
+      // Assuming the formatted data is stored in an array called 'formattedData'
+      const distinctPorts = [];
+      const distinctShares = [];
+      const resultPort = [];
+      const resultShare = [];
+  
+      // Iterate over each record in the data array
+      for (let i = 0; i < response.length; i++) {
+        const record = response[i];
+        const portId = record.PortCoId;
+        const share = record.ShareClassId
+        // Check if the FundId has already been processed
+        if (!distinctPorts.includes(portId)) {
+          // Add the record to the result array
+          resultPort.push(record);
+          // Mark the FundId as processed
+          distinctPorts.push(portId);
+        }
+        if (!distinctShares.includes(share)) {
+          // Add the record to the result array
+          resultShare.push(record);
+          // Mark the FundId as processed
+          distinctShares.push(share);
+        }
+      }
+  
+      //resultFund.sort((a, b) => a.FundType.localeCompare(b.FundType))
+        resultPort.sort((a, b) => a.PortCoName.localeCompare(b.PortCoName))
+        resultShare.sort((a, b) => a.ShareClass.localeCompare(b.ShareClass))
+  
+  // The 'result' array now contains only one row of each distinct fund
+      this.setState({ portCoDetails: resultPort, shareClasses: resultShare });
+      console.log(this.state.fundTypes)
+    });
+  };
+  
+  handleChangeInShareClass = (event) => {
+    const { name, value } = event.target;
+    this.setState({ [name]: value });
+    console.log(value)
+    let input = {
+      PortCoId: Number(this.state.PortCoId),
+      FundId: Number(this.state.FundId),
+        ShareClassId: Number(value),
+        startDate:  null,
+        endDate: null,
+    };
+    console.log(input)
+    create("/cashFlow/searchCashFlows", input).then((response) => {
+      // Assuming the formatted data is stored in an array called 'formattedData'
+      const distinctPorts = [];
+      const distinctFunds = [];
+      const resultPort = [];
+      const resultFund = [];
+  
+      // Iterate over each record in the data array
+      for (let i = 0; i < response.length; i++) {
+        const record = response[i];
+        const portId = record.PortCoId;
+        const fund = record.FundId
+        // Check if the FundId has already been processed
+        if (!distinctPorts.includes(portId)) {
+          // Add the record to the result array
+          resultPort.push(record);
+          // Mark the FundId as processed
+          distinctPorts.push(portId);
+        }
+        if (!distinctFunds.includes(fund)) {
+          // Add the record to the result array
+          resultFund.push(record);
+          // Mark the FundId as processed
+          distinctFunds.push(fund);
+        }
+      }
+  
+      //resultFund.sort((a, b) => a.FundType.localeCompare(b.FundType))
+        resultPort.sort((a, b) => a.PortCoName.localeCompare(b.PortCoName))
+        resultFund.sort((a, b) => a.FundType.localeCompare(b.FundType))
+  
+  // The 'result' array now contains only one row of each distinct fund
+      this.setState({ portCoDetails: resultPort, fundTypes: resultFund });
+      console.log(this.state.fundTypes)
+    });
+  };
+
   render() {
     const { classes, mediaQuery } = this.props;
 
@@ -548,10 +740,10 @@ class CashFlowHistory extends Component {
           />
 
           <Grid container spacing={2}>
-            <Grid item xs={4}>
+            <Grid item xs={10}>
               <h2 className="header-text-color">Cash Flow History</h2>
             </Grid>
-            <Grid item xs={2} style={{ margin: "auto" }}>
+            {/* <Grid item xs={2} style={{ margin: "auto" }}>
               <Link
                 style={{ float: "right" }}
                 target="_blank"
@@ -585,7 +777,7 @@ class CashFlowHistory extends Component {
                   Upload File
                 </Button>
               </label>
-            </Grid>
+            </Grid> */}
             <Grid item xs={2} style={{ margin: "auto" }}>
               <Button
                 className={classes.customButtonPrimary}
@@ -604,7 +796,7 @@ class CashFlowHistory extends Component {
                 filename={`CashFlowDetails.csv`}></CSVLink>
               </Button>
             </Grid>
-            <Grid item xs={2} style={{ margin: "auto" }}>
+            {/* <Grid item xs={2} style={{ margin: "auto" }}>
               <Button
                 className={classes.customButtonPrimary}
                 variant="contained"
@@ -616,7 +808,7 @@ class CashFlowHistory extends Component {
               >
                 Add Cash Flow
               </Button>
-            </Grid>
+            </Grid> */}
           </Grid>
           <Grid container spacing={2}>
             <Grid item xs={3}>
@@ -633,7 +825,7 @@ class CashFlowHistory extends Component {
                   id="demo-simple-select"
                   value={this.state.PortCoId}
                   label="PortCo Name"
-                  onChange={this.handleChange}
+                  onChange={this.handleChangeInPortCo}
                   name="PortCoId"
                   style={{ backgroundColor: "#f9f9f9" }}
                   notched={!this.state.PortCoId ? false : true}
@@ -657,16 +849,13 @@ class CashFlowHistory extends Component {
                   id="demo-simple-select"
                   value={this.state.FundId}
                   label="Fund Type"
-                  onChange={this.handleChange}
+                  onChange={this.handleChangeInFund}
                   name="FundId"
                   style={{ backgroundColor: "#f9f9f9" }}
                   notched={!this.state.FundId ? false : true}
                 >
                   <MenuItem value="0">All</MenuItem>
-                  {this.state.filteredFundTypes.map((fundType) => (
-                  <MenuItem key={fundType.FundId} value={fundType.FundId}>
-                    {fundType.FundType}
-                  </MenuItem>))}
+                    {fundTypes}
                 </Select>
               </FormControl>
             </Grid>
@@ -684,7 +873,7 @@ class CashFlowHistory extends Component {
                   id="demo-simple-select"
                   value={this.state.ShareClassId}
                   label="Share Class"
-                  onChange={this.handleChange}
+                  onChange={this.handleChangeInShareClass}
                   name="ShareClassId"
                   style={{ backgroundColor: "#f9f9f9" }}
                   notched={!this.state.ShareClassId ? false : true}
