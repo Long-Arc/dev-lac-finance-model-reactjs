@@ -763,6 +763,31 @@ handleChangeInShareClass = (event) => {
             deleteRecord={this.deleteRecord}
           />
 
+          {sessionStorage.getItem("loggedInRoleId") !== "1" ? 
+          <Grid container spacing={2}>
+          <Grid item xs={10}>
+            <h2 className="header-text-color">Cash Flow Details</h2>
+          </Grid>
+          <Grid item xs={2} style={{ margin: "auto" }}>
+            <Button
+              className={classes.customButtonPrimary}
+              variant="contained"
+              component="span"
+              size="medium"
+              style={{ float: "right" }}
+              fullWidth
+              onClick={this.exportData}
+            >Export Data
+              <CSVLink 
+              data = {this.filterColumns(this.state.rowData)}
+              className={classes.exportLink}
+              // style={{ display: 'none'}}
+              ref={(r)=>(this.csvLink = r)}
+              filename={`CashFlowDetails.csv`}></CSVLink>
+            </Button>
+          </Grid>
+        </Grid>
+          :
           <Grid container spacing={2}>
             <Grid item xs={4}>
               <h2 className="header-text-color">Cash Flow Details</h2>
@@ -835,6 +860,7 @@ handleChangeInShareClass = (event) => {
               </Button>
             </Grid>
           </Grid>
+  }
           <Grid container spacing={2}>
             <Grid item xs={3}>
               <FormControl fullWidth variant="outlined" size="small">
