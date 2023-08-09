@@ -182,6 +182,7 @@ class CashFlowDetails extends Component {
   onAddCashFlow = () => {
     this.setState({
       open: false,
+      openEntry: false,
       openStatusBar: true,
       severity: "success",
       message: "Details saved succesfully",
@@ -189,6 +190,9 @@ class CashFlowDetails extends Component {
       loading: true,
     });
     this.getCashFlowDetails();
+    this.getFundTypes();
+    this.getPortCoDetails();
+    this.getShareClasses();
   };
 
   getPortCoDetails = () => {
@@ -226,51 +230,51 @@ class CashFlowDetails extends Component {
         };
       });
       this.setState({ rowData: formattedData, loading: false });
-      const distinctPorts = [];
-      const distinctShares = [];
-      const resultPort = [];
-      const resultShare = [];
-      const distinctFunds = [];
-      let resultFund = [];
-      for (let i = 0; i < response.length; i++) {
-        const record = response[i];
-        const portId = record.PortCoId;
-        const share = record.ShareClassId;
-        const fundId = record.FundId;
-        // Check if the FundId has already been processed
-        if (!distinctPorts.includes(portId)) {
-          // Add the record to the result array
-          resultPort.push(record);
-          // Mark the FundId as processed
-          distinctPorts.push(portId);
-        }
-        if (!distinctShares.includes(share)) {
-          // Add the record to the result array
-          resultShare.push(record);
-          // Mark the FundId as processed
-          distinctShares.push(share);
-        }
-        if (!distinctFunds.includes(fundId)) {
-          // Add the record to the result array
-          resultFund.push(record);
-          // Mark the FundId as processed
-          distinctFunds.push(fundId);
-        }
-        resultFund = resultFund.sort();
-      }
+  //     const distinctPorts = [];
+  //     const distinctShares = [];
+  //     const resultPort = [];
+  //     const resultShare = [];
+  //     const distinctFunds = [];
+  //     let resultFund = [];
+  //     for (let i = 0; i < response.length; i++) {
+  //       const record = response[i];
+  //       const portId = record.PortCoId;
+  //       const share = record.ShareClassId;
+  //       const fundId = record.FundId;
+  //       // Check if the FundId has already been processed
+  //       if (!distinctPorts.includes(portId)) {
+  //         // Add the record to the result array
+  //         resultPort.push(record);
+  //         // Mark the FundId as processed
+  //         distinctPorts.push(portId);
+  //       }
+  //       if (!distinctShares.includes(share)) {
+  //         // Add the record to the result array
+  //         resultShare.push(record);
+  //         // Mark the FundId as processed
+  //         distinctShares.push(share);
+  //       }
+  //       if (!distinctFunds.includes(fundId)) {
+  //         // Add the record to the result array
+  //         resultFund.push(record);
+  //         // Mark the FundId as processed
+  //         distinctFunds.push(fundId);
+  //       }
+  //       resultFund = resultFund.sort();
+  //     }
 
-      resultFund.sort((a, b) => a.FundType.localeCompare(b.FundType))
-      resultPort.sort((a, b) => a.PortCoName.localeCompare(b.PortCoName))
-      resultShare.sort((a, b) => a.ShareClass.localeCompare(b.ShareClass))
+  //     resultFund.sort((a, b) => a.FundType.localeCompare(b.FundType))
+  //     resultPort.sort((a, b) => a.PortCoName.localeCompare(b.PortCoName))
+  //     resultShare.sort((a, b) => a.ShareClass.localeCompare(b.ShareClass))
 
   
-  // The 'result' array now contains only one row of each distinct fund
-      this.setState({ portCoDetails: resultPort, shareClasses: resultShare, fundTypes: resultFund });
+  // // The 'result' array now contains only one row of each distinct fund
+  //     this.setState({ portCoDetails: resultPort, shareClasses: resultShare, fundTypes: resultFund });
 
-      if (this.state.flag) {
-        this.setState({ open: true });
-        this.state.flag = false;
-      }
+  //     if (this.state.flag) {
+  //       this.setState({ open: true });
+  //       this.state.flag = false;
+  //     }
     });
   };
 
@@ -666,7 +670,10 @@ handleChangeInShareClass = (event) => {
         FundId: null,
         Year: null,
         Quarter: null,
-      });    
+      }); 
+      this.getFundTypes();
+      this.getPortCoDetails();
+      this.getShareClasses();   
   };
 
   clearSearchInput = () => {
@@ -1009,7 +1016,7 @@ handleChangeInShareClass = (event) => {
                 Search
               </Button>
             </Grid>
-            {/* <Grid item>
+            <Grid item>
               <Button
                 fullWidth
                 className={classes.customButtonPrimary}
@@ -1020,7 +1027,7 @@ handleChangeInShareClass = (event) => {
               >
                 Add Entry
               </Button>
-            </Grid> */}
+            </Grid>
           </Grid>
           <Grid container spacing={0}>
             <Grid item xs={12}>

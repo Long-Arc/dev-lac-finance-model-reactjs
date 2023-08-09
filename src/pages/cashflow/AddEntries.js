@@ -24,6 +24,7 @@ import DateFnsUtils from "@date-io/date-fns";
 import { create, update } from "../../api-services/Service";
 import CommonFunc from "../../components/common/CommonFunc";
 import { Autocomplete } from "@material-ui/lab";
+import { ca } from "date-fns/locale";
 
 const useStyles = makeStyles((theme) => ({
   customButtonPrimary: {
@@ -83,57 +84,37 @@ export default function AddEntry(props) {
     }
   }, [props.cashFlowData.RecordId, setCashFlowDetails, cashFlowDetails.disable]);
 
-  const addCashFlow = () => {
-      cashFlowDetails.ModifiedBy = sessionStorage.getItem("loggedInUser");
-      cashFlowDetails.ModifiedDate = new Date();
-      cashFlowDetails.CreatedBy = sessionStorage.getItem("loggedInUser");
-      cashFlowDetails.CreatedDate = new Date();
-      cashFlowDetails.RecordId = null;
-      cashFlowDetails.InvestmentCost = 0;
-      // create("/cashFlow/createCashFlow", cashFlowDetails).then((response) => {
-      //   reset();
-      //   props.onAddCashFlow();
-      // });
-      console.log(cashFlowDetails);
-      // } else {
-      //   let id = cashFlowDetails.RecordId;
-      //   //cashFlowDetails.Date = '2020-01-01';
-      //   delete cashFlowDetails.RecordId;
-      //   delete cashFlowDetails.FundType;
-      //   delete cashFlowDetails.PortCoName;
-      //   delete cashFlowDetails.ShareClass;
-      //   update("/cashFlow/updateCashFlow", cashFlowDetails, id).then(
-      //     (response) => {
-      //       reset();
-      //       props.onAddCashFlow();
-      //     }
-      //   );
-      // }
-  };
+  const addEntry = () => {
 
-  const showInputErrors = () => {
-    let inputErrors = errors;
-
-    if (!cashFlowDetails.PortCoId) {
-      inputErrors.portCoId = "Please select portco name";
+    if(cashFlowDetails.PortCoId != "") {
+      let newPortco = {
+        PortCoName: cashFlowDetails.PortCoId
+      }
+      create("/portCoDetails/createPortCo", newPortco).then((response) => {
+        console.log(response)
+        props.onAddCashFlow();
+      })
+    } 
+    
+    else if (cashFlowDetails.FundId != "") {
+      let newFund = {
+        FundType: cashFlowDetails.FundId
+      }
+      create("/fundTypes/createFund", newFund).then((response) => {
+        console.log(response)
+        props.onAddCashFlow();
+      })
+    } 
+    
+    else if (cashFlowDetails.ShareClassId != "") {
+      let newShareClass = {
+        ShareClass: cashFlowDetails.ShareClassId
+      }
+      create("/shareClass/createShareClass", newShareClass).then((response) => {
+        console.log(response)
+        props.onAddCashFlow();
+      })
     }
-    if (!cashFlowDetails.FundId) {
-      inputErrors.fundId = "Please select fund type";
-    }
-    if (!cashFlowDetails.ShareClassId) {
-      inputErrors.shareClassId = "Please select share class";
-    }
-    if (!cashFlowDetails.Date) {
-      inputErrors.date = "Please select date";
-    }
-    if (!cashFlowDetails.InvestmentCost && !cashFlowDetails.InvEstimatedValue) {
-      inputErrors.estimatedValue =
-        "Please enter either investment cost or estimated value";
-    }
-
-    setErrors(inputErrors);
-    //number validation
-    //currency dropdown
   };
 
   const handleChange = (event) => {
@@ -143,198 +124,6 @@ export default function AddEntry(props) {
       ...cashFlowDetails,
       [name]: value,
     });
-    switch (name) {
-      case "PortCoId":
-        inputErrors.portCoId =
-          value.length <= 0 ? "Please select portco name" : "";
-        break;
-      case "FundId":
-        inputErrors.fundId = value.length <= 0 ? "Please select fund type" : "";
-        break;
-      case "ShareClassId":
-        inputErrors.shareClassId =
-          value.length <= 0 ? "Please select share class" : "";
-        break;
-      default:
-      // case 'InvEstimatedValue':
-      //     inputErrors.estimatedValue = cashFlowDetails.InvestmentCost.length > 0 && value.length > 0
-      //         ? 'Please enter either investment cost or estimated value' : '';
-      //     break;
-    }
-
-    setErrors(inputErrors);
-  }
-
-  const handleChangeInPortCo = (event) => {
-    const { name, value } = event.target;
-    let inputErrors = errors;
-    setCashFlowDetails({
-      ...cashFlowDetails,
-      [name]: value,
-    });
-    let input = {
-      PortCoId: Number(value),
-      FundId: Number(cashFlowDetails.FundId),
-        ShareClassId: null,
-        startDate:  null,
-        endDate: null,
-    };
-    console.log(input)
-    create("/cashFlow/searchCashFlows", input).then((response) => {
-      // Assuming the formatted data is stored in an array called 'formattedData'
-      const distinctFunds = [];
-      const distinctShares = [];
-      const resultFund = [];
-      const resultShare = [];
-  
-      // Iterate over each record in the data array
-      for (let i = 0; i < response.length; i++) {
-        const record = response[i];
-        const fundId = record.FundId;
-        const share = record.ShareClassId
-        // Check if the FundId has already been processed
-        if (!distinctFunds.includes(fundId)) {
-          // Add the record to the result array
-          resultFund.push(record);
-          // Mark the FundId as processed
-          distinctFunds.push(fundId);
-        }
-        if (!distinctShares.includes(share)) {
-          // Add the record to the result array
-          resultShare.push(record);
-          // Mark the FundId as processed
-          distinctShares.push(share);
-        }
-      }
-  
-      resultFund.sort((a, b) => a.FundType.localeCompare(b.FundType))
-        //resultPort.sort((a, b) => a.PortCoName.localeCompare(b.PortCoName))
-        resultShare.sort((a, b) => a.ShareClass.localeCompare(b.ShareClass))
-        let testfundTypes = resultFund.map((res) => (
-          <MenuItem value={res.FundId}>{res.FundType}</MenuItem>
-        ));
-
-        let testshareClasses = resultShare.map((resShare) => (
-          <MenuItem value={resShare.ShareClassId}>
-            {resShare.ShareClass}
-          </MenuItem>
-        ));
-
-  // The 'result' array now contains only one row of each distinct fund
-      setCashFlowDetails({
-      ...cashFlowDetails,
-      [name]: value,
-      ["fundTypes"]: testfundTypes,
-      ["shareClasses"]: testshareClasses
-    });
-  });
-
-    switch (name) {
-      case "PortCoId":
-        inputErrors.portCoId =
-          value.length <= 0 ? "Please select portco name" : "";
-        break;
-      case "FundId":
-        inputErrors.fundId = value.length <= 0 ? "Please select fund type" : "";
-        break;
-      case "ShareClassId":
-        inputErrors.shareClassId =
-          value.length <= 0 ? "Please select share class" : "";
-        break;
-      default:
-      // case 'InvEstimatedValue':
-      //     inputErrors.estimatedValue = cashFlowDetails.InvestmentCost.length > 0 && value.length > 0
-      //         ? 'Please enter either investment cost or estimated value' : '';
-      //     break;
-    }
-
-    setErrors(inputErrors);
-  };
-
-  const handleChangeInFund = (event) => {
-    const { name, value } = event.target;
-    let inputErrors = errors;
-    setCashFlowDetails({
-      ...cashFlowDetails,
-      [name]: value,
-    });
-    let input = {
-      PortCoId: Number(cashFlowDetails.PortCoId),
-      FundId: Number(value),
-        ShareClassId: null,
-        startDate:  null,
-        endDate: null,
-    };
-    create("/cashFlow/searchCashFlows", input).then((response) => {
-      // Assuming the formatted data is stored in an array called 'formattedData'
-      // Assuming the formatted data is stored in an array called 'formattedData'
-    const distinctPorts = [];
-    const distinctShares = [];
-    const resultPort = [];
-    const resultShare = [];
-
-    // Iterate over each record in the data array
-    for (let i = 0; i < response.length; i++) {
-      const record = response[i];
-      const portId = record.PortCoId;
-      const share = record.ShareClassId
-      // Check if the FundId has already been processed
-      if (!distinctPorts.includes(portId)) {
-        // Add the record to the result array
-        resultPort.push(record);
-        // Mark the FundId as processed
-        distinctPorts.push(portId);
-      }
-      if (!distinctShares.includes(share)) {
-        // Add the record to the result array
-        resultShare.push(record);
-        // Mark the FundId as processed
-        distinctShares.push(share);
-      }
-    }
-
-    //resultFund.sort((a, b) => a.FundType.localeCompare(b.FundType))
-      resultPort.sort((a, b) => a.PortCoName.localeCompare(b.PortCoName))
-      resultShare.sort((a, b) => a.ShareClass.localeCompare(b.ShareClass))
-        let testPortCos = resultPort.map((resP) => (
-          <MenuItem value={resP.PortCoId}>{resP.PortCoName}</MenuItem>
-        ));
-
-        let testshareClasses = resultShare.map((resShare) => (
-          <MenuItem value={resShare.ShareClassId}>
-            {resShare.ShareClass}
-          </MenuItem>
-        ));
-
-  // The 'result' array now contains only one row of each distinct fund
-      setCashFlowDetails({
-      ...cashFlowDetails,
-      [name]: value,
-      ["portCos"]: testPortCos,
-      ["shareClasses"]: testshareClasses
-    });
-  });
-
-    switch (name) {
-      case "PortCoId":
-        inputErrors.portCoId =
-          value.length <= 0 ? "Please select portco name" : "";
-        break;
-      case "FundId":
-        inputErrors.fundId = value.length <= 0 ? "Please select fund type" : "";
-        break;
-      case "ShareClassId":
-        inputErrors.shareClassId =
-          value.length <= 0 ? "Please select share class" : "";
-        break;
-      default:
-      // case 'InvEstimatedValue':
-      //     inputErrors.estimatedValue = cashFlowDetails.InvestmentCost.length > 0 && value.length > 0
-      //         ? 'Please enter either investment cost or estimated value' : '';
-      //     break;
-    }
-
-    setErrors(inputErrors);
   };
 
   const handleDateChange = (date) => {
@@ -521,12 +310,6 @@ export default function AddEntry(props) {
               </IconButton>
             </Grid>
           </Grid>
-          {/* <Autocomplete
-        id="free-solo-demo"
-        freeSolo
-        options={cashFlowDetails.fundTypes}
-        renderInput={(params) => <TextField {...params} label="freeSolo" />}
-      /> */}
           <Grid container spacing={2}>
           <Grid item xs={12}>
           <Button 
@@ -549,9 +332,10 @@ export default function AddEntry(props) {
                   Portfolio
                 </InputLabel>
                 <TextField
+                    name="PortCoId"
                     id="demo-simple-select"
                     value={cashFlowDetails.PortCoId}
-                    onChange={handleChangeInPortCo}
+                    onChange={handleChange}
                     variant='outlined'
                     disabled={cashFlowDetails.disablePortco}
                     size='small'
@@ -580,9 +364,10 @@ export default function AddEntry(props) {
                   Fund
                 </InputLabel>
                 <TextField
+                    name="FundId"
                     id="demo-simple-select"
                     value={cashFlowDetails.FundId}
-                    onChange={handleChangeInFund}
+                    onChange={handleChange}
                     variant='outlined'
                     disabled={cashFlowDetails.disableFund}
                     size='small'
@@ -611,6 +396,7 @@ export default function AddEntry(props) {
                   Share Class
                 </InputLabel>
                 <TextField
+                    name="ShareClassId"
                     id="demo-simple-select"
                     value={cashFlowDetails.ShareClassId}
                     onChange={handleChange}
@@ -628,7 +414,7 @@ export default function AddEntry(props) {
         <DialogActions style={{ padding: "8px 24px 16px 24px" }}>
           <Button
             fullWidth
-            onClick={addCashFlow}
+            onClick={addEntry}
             color="primary"
             className={classes.customButtonPrimary}
             size="medium"
