@@ -351,7 +351,6 @@ class CashFlowDetails extends Component {
   editRowData = (row) => {
     this.clearSearchInput();
     this.setState({ open: true, cashFlowData: row });
-    console.log(row)
   };
 
   deleteRowData = (row) => {

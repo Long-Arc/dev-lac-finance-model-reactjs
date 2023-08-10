@@ -61,4 +61,4 @@ jobs:
           app-name: 'dev-lacfinance'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D99A11DD5FAD482F89A5A0257A76620D }}
-          package: .
+          package: release.zip
