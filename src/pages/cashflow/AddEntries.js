@@ -115,6 +115,7 @@ export default function AddEntry(props) {
         props.onAddCashFlow();
       })
     }
+    reset();
   };
 
   const handleChange = (event) => {
@@ -218,7 +219,6 @@ export default function AddEntry(props) {
   const handleClose = () => {
     reset();
     props.handleClose();
-    setButtonText('Input Details');
   };
 
   const handleUpdates1 = (event) => {
