@@ -91,6 +91,26 @@ class CashFlowHistory extends Component {
           cellStyle: { "text-align": "center" },
         },
         {
+          headerName: "Created By",
+          field: "CreatedBy",
+          cellStyle: { "text-align": "center" },
+        },
+        {
+          headerName: "Created Date",
+          field: "CreatedDate",
+          cellStyle: { "text-align": "center" },
+        },
+        {
+          headerName: "Modified By",
+          field: "ModifiedBy",
+          cellStyle: { "text-align": "center" },
+        },
+        {
+          headerName: "Modified Date",
+          field: "ModifiedDate",
+          cellStyle: { "text-align": "center" },
+        },
+        {
           headerName: "Investment Cost",
           field: "InvestmentCost",
           cellStyle: { "text-align": "center" },
@@ -219,51 +239,6 @@ class CashFlowHistory extends Component {
         };
       });
       this.setState({ rowData: formattedData, loading: false });
-      const distinctPorts = [];
-      const distinctShares = [];
-      const resultPort = [];
-      const resultShare = [];
-      const distinctFunds = [];
-      let resultFund = [];
-      for (let i = 0; i < response.length; i++) {
-        const record = response[i];
-        const portId = record.PortCoId;
-        const share = record.ShareClassId;
-        const fundId = record.FundId;
-        // Check if the FundId has already been processed
-        if (!distinctPorts.includes(portId)) {
-          // Add the record to the result array
-          resultPort.push(record);
-          // Mark the FundId as processed
-          distinctPorts.push(portId);
-        }
-        if (!distinctShares.includes(share)) {
-          // Add the record to the result array
-          resultShare.push(record);
-          // Mark the FundId as processed
-          distinctShares.push(share);
-        }
-        if (!distinctFunds.includes(fundId)) {
-          // Add the record to the result array
-          resultFund.push(record);
-          // Mark the FundId as processed
-          distinctFunds.push(fundId);
-        }
-        resultFund = resultFund.sort();
-      }
-
-      resultFund.sort((a, b) => a.FundType.localeCompare(b.FundType))
-      resultPort.sort((a, b) => a.PortCoName.localeCompare(b.PortCoName))
-      resultShare.sort((a, b) => a.ShareClass.localeCompare(b.ShareClass))
-
-  
-  // The 'result' array now contains only one row of each distinct fund
-      this.setState({ portCoDetails: resultPort, shareClasses: resultShare, fundTypes: resultFund });
-
-      if (this.state.flag) {
-        this.setState({ open: true });
-        this.state.flag = false;
-      }
     });
   };
 
@@ -508,6 +483,9 @@ class CashFlowHistory extends Component {
       Year: null,
       Quarter: null,
     });
+    this.getFundTypes();
+    this.getPortCoDetails();
+    this.getShareClasses(); 
   };
 
   clearSearchInput = () => {
@@ -741,7 +719,7 @@ class CashFlowHistory extends Component {
 
           <Grid container spacing={2}>
             <Grid item xs={10}>
-              <h2 className="header-text-color">Cash Flow History</h2>
+              <h2 className="header-text-color">Audit History</h2>
             </Grid>
             {/* <Grid item xs={2} style={{ margin: "auto" }}>
               <Link

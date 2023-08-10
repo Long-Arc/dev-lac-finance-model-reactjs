@@ -60,7 +60,7 @@ class UserManagement extends Component {
                 { headerName: 'First Name', field: 'FirstName', cellStyle: { 'text-align': "center" } },
                 { headerName: 'Last Name', field: 'LastName', cellStyle: { 'text-align': "center" } },                
                 { headerName: 'Email', field: 'EmailId', cellStyle: { 'text-align': "center" } },
-              /* { headerName: 'Password', field: 'Password', cellStyle: { 'text-align': "center" } },*/
+                { headerName: 'Password', field: 'Password', cellStyle: { 'text-align': "center" } },
                 { headerName: 'Role', field: 'RoleID', cellStyle: { 'text-align': "center" } },
                 { headerName: 'Actions', field: 'Actions', sorting: false, filter: false, cellRenderer: 'actionRenderer', cellStyle: { 'text-align': "center" } },
             ],
@@ -251,12 +251,12 @@ class UserManagement extends Component {
                     this.loadUsers();
                     }
                 );
-                // this.setState({
-                //     userDetails: {
-                //       ...this.state.userDetails,
-                //       Password: "", // Set it to an empty string to clear the field
-                //     },
-                //   });
+                this.setState({
+                    userDetails: {
+                        ...this.state.userDetails,
+                        Password: "", // Set it to an empty string to clear the field
+                    },
+                });
                     } 
         );
     };

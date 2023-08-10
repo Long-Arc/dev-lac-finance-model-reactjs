@@ -17,7 +17,8 @@ import MergeTypeIcon from '@material-ui/icons/MergeType';
 import ClassIcon from '@material-ui/icons/Class';
 import AppsIcon from '@material-ui/icons/Apps';
 import LACLogo from "../../assets/LACLogo2.png";
-import { TimelineRounded } from '@material-ui/icons';
+import { AccountBalance, AttachMoney, Equalizer, Event, HistoryOutlined, MonetizationOn, Timeline, TimelineRounded, TrendingUp } from '@material-ui/icons';
+import { TimelineDot } from '@material-ui/lab';
 
 const drawerWidth = 240;
 
@@ -275,7 +276,7 @@ class NavMenu extends Component {
                         </Typography>
                         <div>
                             <Button color="primary" className={classes.btnText} onClick={this.redirectToDashboard}>
-                                <AppsIcon className={classes.leftIcon} />
+                                <Equalizer className={classes.leftIcon} />
                                 Dashboard
                             </Button>
 
@@ -334,8 +335,8 @@ class NavMenu extends Component {
                             </IconButton>}
                     </div>
                     <List style={{ marginLeft: 5 }}>
-
-                        {/* Products Management */}
+                        
+                        {/* Products Management
                         <ListItem button onClick={this.redirectToPortCo}>
                             <Tooltip title="PortCo">
                                 <StoreIcon className="drawerItems" />
@@ -343,7 +344,7 @@ class NavMenu extends Component {
                             <ListItemText className="drawerItemsText"><span style={{ fontFamily: 'poppins' }}>PortCo</span></ListItemText>
                         </ListItem>
 
-                        {/* Products Management */}
+                        {/* Products Management 
                         <ListItem button onClick={this.redirectToFundTypes}>
                             <Tooltip title="Fund Types">
                                 <MergeTypeIcon className="drawerItems" />
@@ -351,13 +352,13 @@ class NavMenu extends Component {
                             <ListItemText className="drawerItemsText"><span style={{ fontFamily: 'poppins' }}>Fund Types</span></ListItemText>
                         </ListItem>
 
-                        {/* Products Management */}
+                        {/* Products Management 
                         <ListItem button onClick={this.redirectToShareClass}>
                             <Tooltip title="Share Class">
                                 <ClassIcon className="drawerItems" />
                             </Tooltip>
                             <ListItemText className="drawerItemsText"><span style={{ fontFamily: 'poppins' }}>Share Class</span></ListItemText>
-                        </ListItem>
+                        </ListItem> */}
 
                         {/* Products Management */}
                         <ListItem button onClick={this.redirectToCashFlowDetails}>
@@ -369,10 +370,10 @@ class NavMenu extends Component {
 
                         {/* Products Management */}
                         <ListItem button onClick={this.redirectToCashFlowHistory}>
-                            <Tooltip title="Cash Flow History">
-                                <TimelineRounded className="drawerItems" />
+                            <Tooltip title="Audit History">
+                                <Timeline className="drawerItems" />
                             </Tooltip>
-                            <ListItemText className="drawerItemsText"><span style={{ fontFamily: 'poppins' }}>Cash Flow History</span></ListItemText>
+                            <ListItemText className="drawerItemsText"><span style={{ fontFamily: 'poppins' }}>Audit History</span></ListItemText>
                         </ListItem>
 
                         {/* Configurations */}
