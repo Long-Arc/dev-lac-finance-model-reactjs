@@ -13,7 +13,6 @@ import { useState } from 'react';
 import { update, reset, get, create, searchById } from '../../api-services/Service';
 import { NotificationContainer } from 'react-notifications';
 import Layout from '../../components/navigation/Layout';
-import EmailContactForm from '../cashflow/EmailContactForm';
 
 const withMediaQuery = (...args) => Component => props => {
     const mediaQuery = useMediaQuery(...args);    

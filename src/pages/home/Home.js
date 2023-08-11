@@ -18,6 +18,7 @@ import { post } from "../../services/APIService";
 import LACLogo from "../../assets/LACLogo2.png";
 import CommonFunc from "../../components/common/CommonFunc";
 import { searchById } from "../../api-services/Service";
+import EmailSender from "../cashflow/EmailSender";
 
 const useStyles = (theme) => ({
   root: {
@@ -354,6 +355,7 @@ class Home extends Component {
                   )}
                 </Grid> 
                 </form>
+                <EmailSender></EmailSender>
               </Grid> ) : null }
             </Grid>
           </div>

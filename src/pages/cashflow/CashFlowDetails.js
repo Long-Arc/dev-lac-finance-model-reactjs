@@ -29,7 +29,6 @@ import CashFlowDetailsTemplate from "../../assets/CashFlowDetailsTemplate.xlsx";
 import { CSVLink } from "react-csv";
 import Layout from "../../components/navigation/Layout";
 import AddEntry from "./AddEntries";
-import EmailContactForm from "./EmailContactForm";
 
 const withMediaQuery =
   (...args) =>

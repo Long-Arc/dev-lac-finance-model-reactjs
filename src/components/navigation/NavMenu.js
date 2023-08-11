@@ -17,7 +17,7 @@ import MergeTypeIcon from '@material-ui/icons/MergeType';
 import ClassIcon from '@material-ui/icons/Class';
 import AppsIcon from '@material-ui/icons/Apps';
 import LACLogo from "../../assets/LACLogo2.png";
-import { AccountBalance, AttachMoney, Equalizer, Event, HistoryOutlined, MonetizationOn, Timeline, TimelineRounded, TrendingUp } from '@material-ui/icons';
+import { AccountBalance, AttachMoney, Equalizer, Event, Gavel, GavelOutlined, HistoryOutlined, MonetizationOn, Receipt, ReceiptTwoTone, Timeline, TimelineRounded, TrendingUp } from '@material-ui/icons';
 import { TimelineDot } from '@material-ui/lab';
 
 const drawerWidth = 240;
@@ -363,7 +363,7 @@ class NavMenu extends Component {
                         {/* Products Management */}
                         <ListItem button onClick={this.redirectToCashFlowDetails}>
                             <Tooltip title="Cash Flow Details">
-                                <BubbleChartIcon className="drawerItems" />
+                                <AttachMoney className="drawerItems" />
                             </Tooltip>
                             <ListItemText className="drawerItemsText"><span style={{ fontFamily: 'poppins' }}>Cash Flow Details</span></ListItemText>
                         </ListItem>
@@ -371,7 +371,7 @@ class NavMenu extends Component {
                         {/* Products Management */}
                         <ListItem button onClick={this.redirectToCashFlowHistory}>
                             <Tooltip title="Audit History">
-                                <Timeline className="drawerItems" />
+                                <Gavel className="drawerItems" />
                             </Tooltip>
                             <ListItemText className="drawerItemsText"><span style={{ fontFamily: 'poppins' }}>Audit History</span></ListItemText>
                         </ListItem>
