@@ -80,7 +80,24 @@ export default function AddCashFlow(props) {
 
   useEffect(() => {
     if (props.cashFlowData && props.cashFlowData.RecordId > 0) {
-      setCashFlowDetails(props.cashFlowData);
+      setCashFlowDetails({
+        RecordId: props.cashFlowData.RecordId,
+        PortCoId: props.cashFlowData.PortCoId,
+        FundId: props.cashFlowData.FundId,
+        ShareClassId: props.cashFlowData.ShareClassId,
+        Date: props.cashFlowData.Date,
+        InvestmentCost: props.cashFlowData.InvestmentCost,
+        InvEstimatedValue: props.cashFlowData.InvEstimatedValue,
+        CreatedBy: null,
+        CreatedDate: null,
+        ModifiedBy: null,
+        ModifiedDate: null,
+        fundTypes: props.fundTypes,
+        shareClasses: props.shareClasses,
+        portCos: props.portCoDetails,
+        disable: false
+      });
+      console.log(props.cashFlowData)
     }
   }, [props.cashFlowData.RecordId, setCashFlowDetails, cashFlowDetails.disable]);
 
@@ -99,11 +116,9 @@ export default function AddCashFlow(props) {
         delete newCashFlowDetails.portCos;
         delete newCashFlowDetails.disable;
         create("/cashFlow/createCashFlow", newCashFlowDetails).then((response) => {
-          console.log("here")
           reset();
           props.onAddCashFlow();
         });
-        console.log(newCashFlowDetails)
       } else {
         let id = cashFlowDetails.RecordId;
         //cashFlowDetails.Date = '2020-01-01';
@@ -111,7 +126,14 @@ export default function AddCashFlow(props) {
         delete cashFlowDetails.FundType;
         delete cashFlowDetails.PortCoName;
         delete cashFlowDetails.ShareClass;
-        update("/cashFlow/updateCashFlow", cashFlowDetails, id).then(
+        const newCashFlowDetails = { ...cashFlowDetails };
+        delete newCashFlowDetails.fundTypes;
+        delete newCashFlowDetails.shareClasses;
+        delete newCashFlowDetails.portCos;
+        delete newCashFlowDetails.disable;
+        console.log(id)
+        console.log(cashFlowDetails)
+        update("/cashFlow/updateCashFlow", newCashFlowDetails, id).then(
           (response) => {
             reset();
             props.onAddCashFlow();
@@ -579,7 +601,7 @@ export default function AddCashFlow(props) {
                   id="demo-simple-select"
                   value={cashFlowDetails.PortCoId}
                   label="PortCo Name"
-                  onChange={handleChangeInPortCo}
+                  onChange={handleChange}
                   name="PortCoId"
                   disabled={cashFlowDetails.disable}
                 >
@@ -604,7 +626,7 @@ export default function AddCashFlow(props) {
                   id="demo-simple-select"
                   value={cashFlowDetails.FundId}
                   label="Fund Type"
-                  onChange={handleChangeInFund}
+                  onChange={handleChange}
                   name="FundId"
                   disabled={cashFlowDetails.disable}
                 >
@@ -629,7 +651,7 @@ export default function AddCashFlow(props) {
                   id="demo-simple-select"
                   value={cashFlowDetails.ShareClassId}
                   label="Share Class"
-                  onChange={handleChangeInShareClass}
+                  onChange={handleChange}
                   name="ShareClassId"
                   disabled={cashFlowDetails.disable}
                 >

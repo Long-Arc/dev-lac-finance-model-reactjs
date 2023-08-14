@@ -17,6 +17,8 @@ import Loader from "../../components/loader/Loader";
 import { post } from "../../services/APIService";
 import LACLogo from "../../assets/LACLogo2.png";
 import CommonFunc from "../../components/common/CommonFunc";
+import { searchById } from "../../api-services/Service";
+import EmailSender from "../cashflow/EmailSender";
 
 const useStyles = (theme) => ({
   root: {
@@ -108,6 +110,7 @@ class Home extends Component {
       errorMessage: null,
       loading: false,
       token: null,
+      roleId: null,
       errors: {
         email: "",
         password: "",
@@ -123,7 +126,7 @@ class Home extends Component {
     })
       .then((response) => response.json())
       .then((actualData) =>
-        this.setState({ token: actualData.token, loading: false })
+        this.setState({ token: actualData.token, loading: false, roleId: actualData.roleId })
       )
       .catch((err) => {
         this.setState({ token: null });
@@ -150,6 +153,13 @@ class Home extends Component {
       const { history } = this.props;
       if (history && this.state.token !== undefined) {
         sessionStorage.setItem("loggedInUser", this.state.email);
+        searchById("/users/getUserByUserName?userName=email", this.state.email).then(
+          (response) => {
+              console.log(response)
+              let roleId = response.RoleID;
+              sessionStorage.setItem("loggedInRoleId", roleId);
+          }
+        );
         await sessionStorage.setItem("secretToken", this.state.token);
         history.push("/home/cashflowdetails");
       } else {
@@ -205,7 +215,7 @@ class Home extends Component {
 
   render() {
     const { classes, mediaQuery } = this.props;
-    const title = "Long ARC Finance Model";
+    const title = "Long Arc Investment Dashboard";
     const col6 = mediaQuery ? 6 : 12;
     const col3 = mediaQuery ? 6 : 3;
 
@@ -225,7 +235,7 @@ class Home extends Component {
                 <span className="header-font">{title}</span>
               </Typography>
 
-              <div>
+              {/* <div>
                 <Button
                   color="primary"
                   className={classes.btnText}
@@ -240,7 +250,7 @@ class Home extends Component {
                 >
                   Contact Us
                 </Button>
-              </div>
+              </div> */}
             </Toolbar>
           </AppBar>
         </div>
@@ -345,6 +355,7 @@ class Home extends Component {
                   )}
                 </Grid> 
                 </form>
+                {/* <EmailSender></EmailSender> */}
               </Grid> ) : null }
             </Grid>
           </div>

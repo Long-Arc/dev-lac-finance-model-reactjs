@@ -10,6 +10,7 @@ import UserManagement from './pages/settings/UserManagement';
 import CashFlowHistory from './pages/cashflow/CashFlowHistory';
 import CreateAccount from './pages/home/ForgotPassword';
 import ForgotPassword from './pages/home/ForgotPassword';
+import ResetPassword from './pages/home/ResetPassword';
 
 export default class DashboardApp extends Component {
     static displayName = DashboardApp.name;
@@ -24,6 +25,7 @@ export default class DashboardApp extends Component {
                 <Route path='/home/portco' component={PortCo} />
                 <Route path='/home/shareclass' component={ShareClass} />
                 <Route path='/home/dashboard' component={Dashboard} />
+                <Route path='/home/resetpassword' component={ResetPassword}></Route>
                 <Route path='/home/cashflowhistory' component={CashFlowHistory}></Route>
                 <Route path='/home/forgotPassword' component={ForgotPassword}></Route>
                 </div>

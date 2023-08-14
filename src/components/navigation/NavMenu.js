@@ -17,7 +17,8 @@ import MergeTypeIcon from '@material-ui/icons/MergeType';
 import ClassIcon from '@material-ui/icons/Class';
 import AppsIcon from '@material-ui/icons/Apps';
 import LACLogo from "../../assets/LACLogo2.png";
-import { TimelineRounded } from '@material-ui/icons';
+import { AccountBalance, AttachMoney, Equalizer, Event, Gavel, GavelOutlined, HistoryOutlined, MonetizationOn, Receipt, ReceiptTwoTone, Timeline, TimelineRounded, TrendingUp } from '@material-ui/icons';
+import { TimelineDot } from '@material-ui/lab';
 
 const drawerWidth = 240;
 
@@ -152,7 +153,22 @@ class NavMenu extends Component {
             open: false,
             currentStatus: '',
         };
+        this.inactivityTimeout = null;
     }
+
+  // Function to start the inactivity timeout
+  startInactivityTimeout = () => {
+    // Clear any existing timeout to avoid multiple instances
+    if (this.inactivityTimeout) clearTimeout(this.inactivityTimeout);
+
+    // Set the timeout to logout after 30 minutes of inactivity (adjust the time as needed)
+    this.inactivityTimeout = setTimeout(this.logOut, 60 * 60 * 1000); // 60 minutes in milliseconds
+  };
+
+  // Function to clear the inactivity timeout
+  clearInactivityTimeout = () => {
+    if (this.inactivityTimeout) clearTimeout(this.inactivityTimeout);
+  };
 
     handleDrawerOpen = () => {
         this.setState({ open: true })
@@ -161,12 +177,11 @@ class NavMenu extends Component {
         this.setState({ open: false })
     };
 
-    logOut = (event) => {
-        event.preventDefault();
+    logOut = () => {
         sessionStorage.setItem('loggedInUser', '');
         const { history } = this.props;
         if (history) history.push('/Home');
-    }
+      };
 
     hideNavBar() {
         console.log(this.state.open)
@@ -183,10 +198,12 @@ class NavMenu extends Component {
     }
 
     redirectToCashFlowHistory = (event) => {
-        // event.preventDefault();
-        // this.hideNavBar();
-        // const { history } = this.props;
-        // if (history) history.push('/home/cashflowhistory');
+        if (sessionStorage.getItem("loggedInRoleId") == "1") {
+        event.preventDefault();
+        this.hideNavBar();
+        const { history } = this.props;
+        if (history) history.push('/home/cashflowhistory');
+        }
     }
 
     redirectToFundTypes = (event) => {
@@ -224,6 +241,24 @@ class NavMenu extends Component {
         if (history) history.push('/home/dashboard');
     }
 
+    componentDidMount() {
+        window.addEventListener('mousemove', this.startInactivityTimeout);
+        window.addEventListener('keydown', this.startInactivityTimeout);
+        // Add more event listeners as needed to detect user activity
+    
+        // Start the inactivity timeout when the component mounts
+        this.startInactivityTimeout();
+      }
+    
+      // Clean up the event listeners when the component unmounts
+      componentWillUnmount() {
+        this.clearInactivityTimeout();
+        window.removeEventListener('mousemove', this.startInactivityTimeout);
+        window.removeEventListener('keydown', this.startInactivityTimeout);
+        // Remove any additional event listeners you added during componentDidMount
+      }
+    
+
     render() {
         const { classes, mediaQuery } = this.props;
 
@@ -241,7 +276,7 @@ class NavMenu extends Component {
                         </Typography>
                         <div>
                             <Button color="primary" className={classes.btnText} onClick={this.redirectToDashboard}>
-                                <AppsIcon className={classes.leftIcon} />
+                                <Equalizer className={classes.leftIcon} />
                                 Dashboard
                             </Button>
 
@@ -300,8 +335,8 @@ class NavMenu extends Component {
                             </IconButton>}
                     </div>
                     <List style={{ marginLeft: 5 }}>
-
-                        {/* Products Management */}
+                        
+                        {/* Products Management
                         <ListItem button onClick={this.redirectToPortCo}>
                             <Tooltip title="PortCo">
                                 <StoreIcon className="drawerItems" />
@@ -309,7 +344,7 @@ class NavMenu extends Component {
                             <ListItemText className="drawerItemsText"><span style={{ fontFamily: 'poppins' }}>PortCo</span></ListItemText>
                         </ListItem>
 
-                        {/* Products Management */}
+                        {/* Products Management 
                         <ListItem button onClick={this.redirectToFundTypes}>
                             <Tooltip title="Fund Types">
                                 <MergeTypeIcon className="drawerItems" />
@@ -317,28 +352,28 @@ class NavMenu extends Component {
                             <ListItemText className="drawerItemsText"><span style={{ fontFamily: 'poppins' }}>Fund Types</span></ListItemText>
                         </ListItem>
 
-                        {/* Products Management */}
+                        {/* Products Management 
                         <ListItem button onClick={this.redirectToShareClass}>
                             <Tooltip title="Share Class">
                                 <ClassIcon className="drawerItems" />
                             </Tooltip>
                             <ListItemText className="drawerItemsText"><span style={{ fontFamily: 'poppins' }}>Share Class</span></ListItemText>
-                        </ListItem>
+                        </ListItem> */}
 
                         {/* Products Management */}
                         <ListItem button onClick={this.redirectToCashFlowDetails}>
                             <Tooltip title="Cash Flow Details">
-                                <BubbleChartIcon className="drawerItems" />
+                                <AttachMoney className="drawerItems" />
                             </Tooltip>
                             <ListItemText className="drawerItemsText"><span style={{ fontFamily: 'poppins' }}>Cash Flow Details</span></ListItemText>
                         </ListItem>
 
                         {/* Products Management */}
                         <ListItem button onClick={this.redirectToCashFlowHistory}>
-                            <Tooltip title="Cash Flow History">
-                                <TimelineRounded className="drawerItems" />
+                            <Tooltip title="Audit History">
+                                <Gavel className="drawerItems" />
                             </Tooltip>
-                            <ListItemText className="drawerItemsText"><span style={{ fontFamily: 'poppins' }}>Cash Flow History</span></ListItemText>
+                            <ListItemText className="drawerItemsText"><span style={{ fontFamily: 'poppins' }}>Audit History</span></ListItemText>
                         </ListItem>
 
                         {/* Configurations */}
