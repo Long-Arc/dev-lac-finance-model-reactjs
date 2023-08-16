@@ -4,7 +4,7 @@ import axios from 'axios';
 const EmailSender = () => {
   const handleSendEmail = async () => {
     const data = {
-      to: 'dhruv.dhawan@vearc.com',
+      to: 'dhruvvdhawan@gmail.com',
       subject: 'Test Email',
       text: 'This is a test email.',
       html: '<h1>This is a test email.</h1>',

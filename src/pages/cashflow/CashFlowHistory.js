@@ -951,12 +951,13 @@ class CashFlowHistory extends Component {
                   defaultColDef={this.state.defaultColDef}
                   frameworkComponents={this.state.frameworkComponents}
                   context={this.state.context}
-                  pagination={true}
+                  pagination={false}
                   gridOptions={this.gridOptions}
-                  paginationPageSize={20}
+                  paginationPageSize={this.state.rowData.length}
                   components={this.state.components}
                   rowClassRules={this.state.rowClassRules}
                   suppressClickEdit={true}
+                  domLayout="autoHeight"
                 />
               </div>
             </Grid>

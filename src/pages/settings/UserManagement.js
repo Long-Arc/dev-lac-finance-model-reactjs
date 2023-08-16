@@ -59,9 +59,9 @@ class UserManagement extends Component {
                 { headerName: 'First Name', field: 'FirstName', cellStyle: { 'text-align': "center" } },
                 { headerName: 'Last Name', field: 'LastName', cellStyle: { 'text-align': "center" } },                
                 { headerName: 'Email', field: 'EmailId', cellStyle: { 'text-align': "center" } },
-                { headerName: 'Password', field: 'Password', cellStyle: { 'text-align': "center" } },
+              /*  { headerName: 'Password', field: 'Password', cellStyle: { 'text-align': "center" } },*/
                 { headerName: 'Role', field: 'RoleID', cellStyle: { 'text-align': "center" } },
-                { headerName: 'Actions', field: 'Actions', sorting: false, filter: false, cellRenderer: 'actionRenderer', cellStyle: { 'text-align': "center" } },
+                { headerName: 'Actions', field: 'Actions', sorting: false, filter: false, cellRenderer: null, cellStyle: { 'text-align': "center" } },
             ],
             context: { componentParent: this },
             frameworkComponents: { actionRenderer: ActionRenderer },
@@ -338,14 +338,21 @@ class UserManagement extends Component {
                         </form>
                         <Grid container spacing={0}>
                             <Grid item xs={12}>
-                            <div className="ag-theme-alpine" style={{ width: "100%", height: 450, marginTop: 10 }}>
+                            <div className="ag-theme-alpine" style={{ width: "100%", height: 200, marginTop: 10 }}>
                                     <AgGridReact
-                                        columnDefs={this.state.columnDefs} rowData={this.state.rowData}
-                                        onGridReady={this.onGridReady} defaultColDef={this.state.defaultColDef}
-                                        frameworkComponents={this.state.frameworkComponents} context={this.state.context}
-                                        pagination={true} gridOptions={this.gridOptions} paginationAutoPageSize={true}
-                                        components={this.state.components} rowClassRules={this.state.rowClassRules} 
+                                        columnDefs={this.state.columnDefs}
+                                        rowData={this.state.rowData}
+                                        onGridReady={this.onGridReady}
+                                        defaultColDef={this.state.defaultColDef}
+                                        frameworkComponents={this.state.frameworkComponents}
+                                        context={this.state.context}
+                                        pagination={false}
+                                        gridOptions={this.gridOptions}
+                                        paginationPageSize={this.state.rowData.length}
+                                        components={this.state.components}
+                                        rowClassRules={this.state.rowClassRules}
                                         suppressClickEdit={true}
+                                        domLayout="autoHeight"
                                     />
                                 </div>
                             </Grid>                        
@@ -379,7 +386,6 @@ class UserManagement extends Component {
                                 Change Password
                                 </Button>
                             </Grid>
-                            <Grid item xs={col6}></Grid>
                             </Grid>
                     </div>
                     )}

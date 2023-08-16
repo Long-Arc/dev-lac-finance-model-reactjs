@@ -355,7 +355,6 @@ class Home extends Component {
                   )}
                 </Grid> 
                 </form>
-                {/* <EmailSender></EmailSender> */}
               </Grid> ) : null }
             </Grid>
           </div>
