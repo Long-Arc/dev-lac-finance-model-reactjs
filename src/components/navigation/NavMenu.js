@@ -162,7 +162,7 @@ class NavMenu extends Component {
     if (this.inactivityTimeout) clearTimeout(this.inactivityTimeout);
 
     // Set the timeout to logout after 30 minutes of inactivity (adjust the time as needed)
-    this.inactivityTimeout = setTimeout(this.logOut, 60 * 60 * 1000); // 60 minutes in milliseconds
+    this.inactivityTimeout = setTimeout(this.logOut, 8 * 60 * 60 * 1000); // 60 minutes in milliseconds
   };
 
   // Function to clear the inactivity timeout

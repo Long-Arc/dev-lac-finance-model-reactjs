@@ -19,6 +19,7 @@ import LACLogo from "../../assets/LACLogo2.png";
 import CommonFunc from "../../components/common/CommonFunc";
 import { searchById } from "../../api-services/Service";
 import EmailSender from "../cashflow/EmailSender";
+import axios from "axios";
 
 const useStyles = (theme) => ({
   root: {
@@ -111,6 +112,9 @@ class Home extends Component {
       loading: false,
       token: null,
       roleId: null,
+      actionText: 'Request OTP',
+      otp: null,
+      confirmOtp: null,
       errors: {
         email: "",
         password: "",
@@ -140,7 +144,38 @@ class Home extends Component {
     history.push("/home/forgotPassword");
   }
 
+  handleSendEmail = async () => {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let token = '';
+  
+    for (let i = 0; i < 8; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      token += characters.charAt(randomIndex);
+    }
+    this.setState({ otp: token });
+
+    const data = {
+        to: this.state.email, // Replace with the recipient's email address
+        subject: 'LAC Investment Dashboard OTP',
+        //text: `Hello,\n\nThis is a friendly reminder to change your password soon. Your current password is: ${this.state.password}\n\nPlease log in to your account and update your password as soon as possible.\n\nBest regards,\nYour App Team`,
+        html: `
+          <h2>Hello,</h2>
+          <p>You have tried to login</p>
+          <p>Your OTP is: <strong>${this.state.otp}</strong></p>
+          <p>Best regards,<br>Long Arc Capital Team</p>
+        `,
+      };
+
+    try {
+      const response = await axios.post('http://localhost:5000/email/send', data);
+      console.log(response.data); // Assuming the backend sends a response message
+    } catch (error) {
+      console.error('Error sending email:', error);
+    }
+  };
+
   loginToDashboard = async (event) => {
+  if (this.state.actionText === 'Request OTP') {
     event.preventDefault();
     if (
       CommonFunc.validateForm(this.state.errors) &&
@@ -148,20 +183,23 @@ class Home extends Component {
       this.state.password
     ) {
       this.setState({ loading: true });
-
       await this.getToken();
       const { history } = this.props;
       if (history && this.state.token !== undefined) {
-        sessionStorage.setItem("loggedInUser", this.state.email);
-        searchById("/users/getUserByUserName?userName=email", this.state.email).then(
-          (response) => {
-              console.log(response)
-              let roleId = response.RoleID;
-              sessionStorage.setItem("loggedInRoleId", roleId);
-          }
-        );
-        await sessionStorage.setItem("secretToken", this.state.token);
-        history.push("/home/cashflowdetails");
+        // sessionStorage.setItem("loggedInUser", this.state.email);
+        // searchById("/users/getUserByUserName?userName=email", this.state.email).then(
+        //   (response) => {
+        //       console.log(response)
+        //       let roleId = response.RoleID;
+        //       sessionStorage.setItem("loggedInRoleId", roleId);
+        //   }
+        // );
+        // await sessionStorage.setItem("secretToken", this.state.token);
+        this.handleSendEmail();
+        this.setState({actionText: 'Login'})
+        let errors = this.state.errors;
+        this.setState({ errors, errorMessage: <span style={{ color: 'green' }}>OTP Sent!</span> });
+        // history.push("/home/cashflowdetails);
       } else {
         let errors = this.state.errors;
         if (!this.state.email) {
@@ -182,6 +220,25 @@ class Home extends Component {
       }
       this.setState({ errors, errorMessage: null });
     }
+  } else {
+    event.preventDefault();
+    if (this.state.otp === this.state.confirmOtp) {
+      sessionStorage.setItem("loggedInUser", this.state.email);
+        searchById("/users/getUserByUserName?userName=email", this.state.email).then(
+          (response) => {
+              console.log(response)
+              let roleId = response.RoleID;
+              sessionStorage.setItem("loggedInRoleId", roleId);
+          }
+        );
+      await sessionStorage.setItem("secretToken", this.state.token);
+      const { history } = this.props;
+      history.push("/home/cashflowdetails");
+    } else {
+      let errors = this.state.errors;
+      this.setState({ errors, errorMessage: "Incorrect OTP!" });
+    }
+  }
   };
 
   handleChange = (event) => {
@@ -284,6 +341,7 @@ class Home extends Component {
                       noValidate
                       value={this.state.email}
                       variant="outlined"
+                      disabled={this.state.actionText === "Request OTP" ? false : true}
                     />
                     {this.state.errors.email.length > 0 && (
                       <span className="error">{this.state.errors.email}</span>
@@ -307,6 +365,7 @@ class Home extends Component {
                       value={this.state.password}
                       type="password"
                       variant="outlined"
+                      disabled={this.state.actionText === "Request OTP" ? false : true}
                     />
                     {this.state.errors.password.length > 0 && (
                       <span className="error">
@@ -321,6 +380,22 @@ class Home extends Component {
                   </Grid>
                   <Grid item xs={col6}></Grid>
                   <Grid item xs={col6}>
+                    <TextField
+                      fullWidth
+                      name="confirmOtp"
+                      label="OTP"
+                      required
+                      size="small"
+                      onChange={this.handleChange}
+                      noValidate
+                      value={this.state.confirmOtp}
+                      type="password"
+                      variant="outlined"
+                      disabled={this.state.actionText === "Request OTP" ? true : false}
+                    />
+                  </Grid>
+                  <Grid item xs={col6}></Grid>
+                  <Grid item xs={col6}>
                     <Button
                       type="submit"
                       fullWidth
@@ -330,7 +405,7 @@ class Home extends Component {
                       color="primary"
                       onClick={this.loginToDashboard}
                     >
-                      Login
+                      {this.state.actionText}
                     </Button>
                   </Grid>
                   {/* <Grid item xs={col6}></Grid>
