@@ -175,7 +175,7 @@ class Home extends Component {
   };
 
   loginToDashboard = async (event) => {
-  if (this.state.actionText === 'Request OTP') {
+  //if (this.state.actionText === 'Request OTP') {
     event.preventDefault();
     if (
       CommonFunc.validateForm(this.state.errors) &&
@@ -186,20 +186,20 @@ class Home extends Component {
       await this.getToken();
       const { history } = this.props;
       if (history && this.state.token !== undefined) {
-        // sessionStorage.setItem("loggedInUser", this.state.email);
-        // searchById("/users/getUserByUserName?userName=email", this.state.email).then(
-        //   (response) => {
-        //       console.log(response)
-        //       let roleId = response.RoleID;
-        //       sessionStorage.setItem("loggedInRoleId", roleId);
-        //   }
-        // );
-        // await sessionStorage.setItem("secretToken", this.state.token);
-        this.handleSendEmail();
-        this.setState({actionText: 'Login'})
-        let errors = this.state.errors;
-        this.setState({ errors, errorMessage: <span style={{ color: 'green' }}>OTP Sent!</span> });
-        // history.push("/home/cashflowdetails);
+        sessionStorage.setItem("loggedInUser", this.state.email);
+        searchById("/users/getUserByUserName?userName=email", this.state.email).then(
+          (response) => {
+              console.log(response)
+              let roleId = response.RoleID;
+              sessionStorage.setItem("loggedInRoleId", roleId);
+          }
+        );
+        await sessionStorage.setItem("secretToken", this.state.token);
+        // this.handleSendEmail();
+        // this.setState({actionText: 'Login'})
+        // let errors = this.state.errors;
+        // this.setState({ errors, errorMessage: <span style={{ color: 'green' }}>OTP Sent!</span> });
+        history.push("/home/cashflowdetails")
       } else {
         let errors = this.state.errors;
         if (!this.state.email) {
@@ -220,25 +220,25 @@ class Home extends Component {
       }
       this.setState({ errors, errorMessage: null });
     }
-  } else {
-    event.preventDefault();
-    if (this.state.otp === this.state.confirmOtp) {
-      sessionStorage.setItem("loggedInUser", this.state.email);
-        searchById("/users/getUserByUserName?userName=email", this.state.email).then(
-          (response) => {
-              console.log(response)
-              let roleId = response.RoleID;
-              sessionStorage.setItem("loggedInRoleId", roleId);
-          }
-        );
-      await sessionStorage.setItem("secretToken", this.state.token);
-      const { history } = this.props;
-      history.push("/home/cashflowdetails");
-    } else {
-      let errors = this.state.errors;
-      this.setState({ errors, errorMessage: "Incorrect OTP!" });
-    }
-  }
+  // } else {
+  //   event.preventDefault();
+  //   if (this.state.otp === this.state.confirmOtp) {
+  //     sessionStorage.setItem("loggedInUser", this.state.email);
+  //       searchById("/users/getUserByUserName?userName=email", this.state.email).then(
+  //         (response) => {
+  //             console.log(response)
+  //             let roleId = response.RoleID;
+  //             sessionStorage.setItem("loggedInRoleId", roleId);
+  //         }
+  //       );
+  //     await sessionStorage.setItem("secretToken", this.state.token);
+  //     const { history } = this.props;
+  //     history.push("/home/cashflowdetails");
+  //   } else {
+  //     let errors = this.state.errors;
+  //     this.setState({ errors, errorMessage: "Incorrect OTP!" });
+  //   }
+  // }
   };
 
   handleChange = (event) => {
@@ -378,7 +378,7 @@ class Home extends Component {
                       </span>
                     )}
                   </Grid>
-                  <Grid item xs={col6}></Grid>
+                  {/* <Grid item xs={col6}></Grid>
                   <Grid item xs={col6}>
                     <TextField
                       fullWidth
@@ -393,7 +393,7 @@ class Home extends Component {
                       variant="outlined"
                       disabled={this.state.actionText === "Request OTP" ? true : false}
                     />
-                  </Grid>
+                  </Grid> */}
                   <Grid item xs={col6}></Grid>
                   <Grid item xs={col6}>
                     <Button
@@ -405,7 +405,7 @@ class Home extends Component {
                       color="primary"
                       onClick={this.loginToDashboard}
                     >
-                      {this.state.actionText}
+                      Login
                     </Button>
                   </Grid>
                   {/* <Grid item xs={col6}></Grid>
