@@ -13,6 +13,7 @@ import { useState } from 'react';
 import { update, reset, get, create, searchById } from '../../api-services/Service';
 import { NotificationContainer } from 'react-notifications';
 import Layout from '../../components/navigation/Layout';
+import axios from 'axios';
 
 const withMediaQuery = (...args) => Component => props => {
     const mediaQuery = useMediaQuery(...args);    
@@ -59,9 +60,9 @@ class UserManagement extends Component {
                 { headerName: 'First Name', field: 'FirstName', cellStyle: { 'text-align': "center" } },
                 { headerName: 'Last Name', field: 'LastName', cellStyle: { 'text-align': "center" } },                
                 { headerName: 'Email', field: 'EmailId', cellStyle: { 'text-align': "center" } },
-                { headerName: 'Password', field: 'Password', cellStyle: { 'text-align': "center" } },
+              /*  { headerName: 'Password', field: 'Password', cellStyle: { 'text-align': "center" } },*/
                 { headerName: 'Role', field: 'RoleID', cellStyle: { 'text-align': "center" } },
-                { headerName: 'Actions', field: 'Actions', sorting: false, filter: false, cellRenderer: 'actionRenderer', cellStyle: { 'text-align': "center" } },
+                { headerName: 'Actions', field: 'Actions', sorting: false, filter: false, cellRenderer: null, cellStyle: { 'text-align': "center" } },
             ],
             context: { componentParent: this },
             frameworkComponents: { actionRenderer: ActionRenderer },
@@ -101,6 +102,7 @@ class UserManagement extends Component {
             //newUser.MobileNo = this.state.mobileNo;
             //newUser.Role = this.state.role;
             this.createUser(newUser);
+            this.handleSendEmail();
         } else {
             let errors = this.state.errors;
             if (!this.state.fullName) {
@@ -260,6 +262,29 @@ class UserManagement extends Component {
         );
     };
 
+    handleSendEmail = async () => {
+        const data = {
+            to: this.state.email, // Replace with the recipient's email address
+            subject: 'LAC Investment Dashboard Account Creation',
+            //text: `Hello,\n\nThis is a friendly reminder to change your password soon. Your current password is: ${this.state.password}\n\nPlease log in to your account and update your password as soon as possible.\n\nBest regards,\nYour App Team`,
+            html: `
+              <h2>Hello ${this.state.fullName},</h2>
+              <p>An account has been created using this email id ${this.state.email}</p>
+              <p>Your current password is: <strong>${this.state.password}</strong></p>
+              <p>This is a friendly reminder to change your password soon.</p>
+              <p>Please log in to your account here : https://dev-lacfinance.azurewebsites.net/ and update your password as soon as possible.</p>
+              <p>Best regards,<br>Long Arc Capital Team</p>
+            `,
+          };
+    
+        try {
+          const response = await axios.post('http://localhost:5000/email/send', data);
+          console.log(response.data); // Assuming the backend sends a response message
+        } catch (error) {
+          console.error('Error sending email:', error);
+        }
+      };
+
     render() {
         const { classes, mediaQuery } = this.props;
         const col6 = mediaQuery ? 6 : 12;
@@ -285,7 +310,7 @@ class UserManagement extends Component {
                                 </Grid> */}
                                 <Grid item xs={col10}></Grid>
                                 <Grid item xs={col6}>
-                                    <TextField fullWidth required="true" name="fullName" id="txtFullName" label="First Name"
+                                    <TextField fullWidth required="true" name="fullName" id="txtFullName" label="Full Name"
                                         onChange={this.handleChange} noValidate value={this.state.fullName} 
                                         InputLabelProps={{ shrink: true, style: { fontSize: 18 } }}/>
                                     {this.state.errors.fullName.length > 0 &&
@@ -338,14 +363,21 @@ class UserManagement extends Component {
                         </form>
                         <Grid container spacing={0}>
                             <Grid item xs={12}>
-                            <div className="ag-theme-alpine" style={{ width: "100%", height: 450, marginTop: 10 }}>
+                            <div className="ag-theme-alpine" style={{ width: "100%", height: 200, marginTop: 10 }}>
                                     <AgGridReact
-                                        columnDefs={this.state.columnDefs} rowData={this.state.rowData}
-                                        onGridReady={this.onGridReady} defaultColDef={this.state.defaultColDef}
-                                        frameworkComponents={this.state.frameworkComponents} context={this.state.context}
-                                        pagination={true} gridOptions={this.gridOptions} paginationAutoPageSize={true}
-                                        components={this.state.components} rowClassRules={this.state.rowClassRules} 
+                                        columnDefs={this.state.columnDefs}
+                                        rowData={this.state.rowData}
+                                        onGridReady={this.onGridReady}
+                                        defaultColDef={this.state.defaultColDef}
+                                        frameworkComponents={this.state.frameworkComponents}
+                                        context={this.state.context}
+                                        pagination={false}
+                                        gridOptions={this.gridOptions}
+                                        paginationPageSize={this.state.rowData.length}
+                                        components={this.state.components}
+                                        rowClassRules={this.state.rowClassRules}
                                         suppressClickEdit={true}
+                                        domLayout="autoHeight"
                                     />
                                 </div>
                             </Grid>                        
@@ -379,7 +411,6 @@ class UserManagement extends Component {
                                 Change Password
                                 </Button>
                             </Grid>
-                            <Grid item xs={col6}></Grid>
                             </Grid>
                     </div>
                     )}
