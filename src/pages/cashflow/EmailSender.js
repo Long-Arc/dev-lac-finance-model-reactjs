@@ -11,7 +11,7 @@ const EmailSender = () => {
     };
 
     try {
-      const response = await axios.post('http://localhost:5000/email/send', data);
+      const response = await axios.post('https://dev-api-lacfinance.azurewebsites.net/email/send', data);
       console.log(response.data); // Assuming the backend sends a response message
     } catch (error) {
       console.error('Error sending email:', error);
