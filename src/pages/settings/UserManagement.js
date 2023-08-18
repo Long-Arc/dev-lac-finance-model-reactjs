@@ -102,7 +102,7 @@ class UserManagement extends Component {
             //newUser.MobileNo = this.state.mobileNo;
             //newUser.Role = this.state.role;
             this.createUser(newUser);
-            //this.handleSendEmail();
+            this.handleSendEmail();
         } else {
             let errors = this.state.errors;
             if (!this.state.fullName) {
