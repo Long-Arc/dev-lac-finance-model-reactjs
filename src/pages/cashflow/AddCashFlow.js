@@ -133,7 +133,8 @@ export default function AddCashFlow(props) {
         delete newCashFlowDetails.disable;
         console.log(id)
         console.log(cashFlowDetails)
-        update("/cashFlow/updateCashFlow", newCashFlowDetails, id).then(
+        console.log(newCashFlowDetails)
+        update("/cashFlow/updateCashFlow/email", newCashFlowDetails, id).then(
           (response) => {
             reset();
             props.onAddCashFlow();

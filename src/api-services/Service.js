@@ -1,5 +1,5 @@
-const baseUrl = "https://dev-api-lacfinance.azurewebsites.net";
-// const baseUrl = "http://localhost:5000";
+//const baseUrl = "https://dev-api-lacfinance.azurewebsites.net";
+const baseUrl = "http://localhost:5000";
 
 export async function get(url) {
   try {
