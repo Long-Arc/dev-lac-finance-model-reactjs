@@ -1046,7 +1046,6 @@ handleChangeInShareClass = (event) => {
                   components={this.state.components}
                   rowClassRules={this.state.rowClassRules}
                   suppressClickEdit={true}
-                  domLayout="autoHeight"
                 />
               </div>
             </Grid>
