@@ -127,13 +127,28 @@ export default function AddCashFlow(props) {
         delete cashFlowDetails.PortCoName;
         delete cashFlowDetails.ShareClass;
         const newCashFlowDetails = { ...cashFlowDetails };
+        console.log(newCashFlowDetails);
+        if (newCashFlowDetails.InvestmentCost) {
+          newCashFlowDetails.InvestmentCost = newCashFlowDetails.InvestmentCost.includes('$') ? newCashFlowDetails.InvestmentCost?.replace('$', '')
+            : newCashFlowDetails.InvestmentCost;
+          newCashFlowDetails.InvestmentCost = newCashFlowDetails.InvestmentCost.includes(',') ? newCashFlowDetails.InvestmentCost?.replace(',', '')
+            : newCashFlowDetails.InvestmentCost;
+          newCashFlowDetails.InvestmentCost = parseInt(newCashFlowDetails.InvestmentCost);
+        }
+        if (newCashFlowDetails.InvEstimatedValue) {
+          newCashFlowDetails.InvEstimatedValue = newCashFlowDetails.InvEstimatedValue.includes('$') ? newCashFlowDetails.InvEstimatedValue?.replace('$', '')
+            : newCashFlowDetails.InvEstimatedValue;
+          newCashFlowDetails.InvEstimatedValue = newCashFlowDetails.InvEstimatedValue.includes(',') ? newCashFlowDetails.InvEstimatedValue?.replace(',', '')
+            : newCashFlowDetails.InvEstimatedValue;
+          newCashFlowDetails.InvEstimatedValue = parseInt(newCashFlowDetails.InvEstimatedValue);
+        }
         delete newCashFlowDetails.fundTypes;
         delete newCashFlowDetails.shareClasses;
         delete newCashFlowDetails.portCos;
         delete newCashFlowDetails.disable;
         console.log(id)
         console.log(cashFlowDetails)
-        update("/cashFlow/updateCashFlow", newCashFlowDetails, id).then(
+        update(`/cashFlow/updateCashFlow/${id}`, newCashFlowDetails, id).then(
           (response) => {
             reset();
             props.onAddCashFlow();
@@ -209,9 +224,9 @@ export default function AddCashFlow(props) {
     let input = {
       PortCoId: Number(value),
       FundId: Number(cashFlowDetails.FundId),
-        ShareClassId: Number(cashFlowDetails.ShareClassId),
-        startDate:  null,
-        endDate: null,
+      ShareClassId: Number(cashFlowDetails.ShareClassId),
+      startDate: null,
+      endDate: null,
     };
     console.log(input)
     create("/cashFlow/searchCashFlows", input).then((response) => {
@@ -220,7 +235,7 @@ export default function AddCashFlow(props) {
       const distinctShares = [];
       const resultFund = [];
       const resultShare = [];
-  
+
       // Iterate over each record in the data array
       for (let i = 0; i < response.length; i++) {
         const record = response[i];
@@ -240,28 +255,28 @@ export default function AddCashFlow(props) {
           distinctShares.push(share);
         }
       }
-  
+
       resultFund.sort((a, b) => a.FundType.localeCompare(b.FundType))
-        //resultPort.sort((a, b) => a.PortCoName.localeCompare(b.PortCoName))
-        resultShare.sort((a, b) => a.ShareClass.localeCompare(b.ShareClass))
-        let testfundTypes = resultFund.map((res) => (
-          <MenuItem value={res.FundId}>{res.FundType}</MenuItem>
-        ));
+      //resultPort.sort((a, b) => a.PortCoName.localeCompare(b.PortCoName))
+      resultShare.sort((a, b) => a.ShareClass.localeCompare(b.ShareClass))
+      let testfundTypes = resultFund.map((res) => (
+        <MenuItem value={res.FundId}>{res.FundType}</MenuItem>
+      ));
 
-        let testshareClasses = resultShare.map((resShare) => (
-          <MenuItem value={resShare.ShareClassId}>
-            {resShare.ShareClass}
-          </MenuItem>
-        ));
+      let testshareClasses = resultShare.map((resShare) => (
+        <MenuItem value={resShare.ShareClassId}>
+          {resShare.ShareClass}
+        </MenuItem>
+      ));
 
-  // The 'result' array now contains only one row of each distinct fund
+      // The 'result' array now contains only one row of each distinct fund
       setCashFlowDetails({
-      ...cashFlowDetails,
-      [name]: value,
-      ["fundTypes"]: testfundTypes,
-      ["shareClasses"]: testshareClasses
+        ...cashFlowDetails,
+        [name]: value,
+        ["fundTypes"]: testfundTypes,
+        ["shareClasses"]: testshareClasses
+      });
     });
-  });
 
     switch (name) {
       case "PortCoId":
@@ -295,59 +310,59 @@ export default function AddCashFlow(props) {
     let input = {
       PortCoId: Number(cashFlowDetails.PortCoId),
       FundId: Number(value),
-        ShareClassId: Number(cashFlowDetails.ShareClassId),
-        startDate:  null,
-        endDate: null,
+      ShareClassId: Number(cashFlowDetails.ShareClassId),
+      startDate: null,
+      endDate: null,
     };
     create("/cashFlow/searchCashFlows", input).then((response) => {
       // Assuming the formatted data is stored in an array called 'formattedData'
       // Assuming the formatted data is stored in an array called 'formattedData'
-    const distinctPorts = [];
-    const distinctShares = [];
-    const resultPort = [];
-    const resultShare = [];
+      const distinctPorts = [];
+      const distinctShares = [];
+      const resultPort = [];
+      const resultShare = [];
 
-    // Iterate over each record in the data array
-    for (let i = 0; i < response.length; i++) {
-      const record = response[i];
-      const portId = record.PortCoId;
-      const share = record.ShareClassId
-      // Check if the FundId has already been processed
-      if (!distinctPorts.includes(portId)) {
-        // Add the record to the result array
-        resultPort.push(record);
-        // Mark the FundId as processed
-        distinctPorts.push(portId);
+      // Iterate over each record in the data array
+      for (let i = 0; i < response.length; i++) {
+        const record = response[i];
+        const portId = record.PortCoId;
+        const share = record.ShareClassId
+        // Check if the FundId has already been processed
+        if (!distinctPorts.includes(portId)) {
+          // Add the record to the result array
+          resultPort.push(record);
+          // Mark the FundId as processed
+          distinctPorts.push(portId);
+        }
+        if (!distinctShares.includes(share)) {
+          // Add the record to the result array
+          resultShare.push(record);
+          // Mark the FundId as processed
+          distinctShares.push(share);
+        }
       }
-      if (!distinctShares.includes(share)) {
-        // Add the record to the result array
-        resultShare.push(record);
-        // Mark the FundId as processed
-        distinctShares.push(share);
-      }
-    }
 
-    //resultFund.sort((a, b) => a.FundType.localeCompare(b.FundType))
+      //resultFund.sort((a, b) => a.FundType.localeCompare(b.FundType))
       resultPort.sort((a, b) => a.PortCoName.localeCompare(b.PortCoName))
       resultShare.sort((a, b) => a.ShareClass.localeCompare(b.ShareClass))
-        let testPortCos = resultPort.map((resP) => (
-          <MenuItem value={resP.PortCoId}>{resP.PortCoName}</MenuItem>
-        ));
+      let testPortCos = resultPort.map((resP) => (
+        <MenuItem value={resP.PortCoId}>{resP.PortCoName}</MenuItem>
+      ));
 
-        let testshareClasses = resultShare.map((resShare) => (
-          <MenuItem value={resShare.ShareClassId}>
-            {resShare.ShareClass}
-          </MenuItem>
-        ));
+      let testshareClasses = resultShare.map((resShare) => (
+        <MenuItem value={resShare.ShareClassId}>
+          {resShare.ShareClass}
+        </MenuItem>
+      ));
 
-  // The 'result' array now contains only one row of each distinct fund
+      // The 'result' array now contains only one row of each distinct fund
       setCashFlowDetails({
-      ...cashFlowDetails,
-      [name]: value,
-      ["portCos"]: testPortCos,
-      ["shareClasses"]: testshareClasses
+        ...cashFlowDetails,
+        [name]: value,
+        ["portCos"]: testPortCos,
+        ["shareClasses"]: testshareClasses
+      });
     });
-  });
 
     switch (name) {
       case "PortCoId":
@@ -381,9 +396,9 @@ export default function AddCashFlow(props) {
     let input = {
       PortCoId: Number(cashFlowDetails.PortCoId),
       FundId: Number(cashFlowDetails.FundId),
-        ShareClassId: Number(value),
-        startDate:  null,
-        endDate: null,
+      ShareClassId: Number(value),
+      startDate: null,
+      endDate: null,
     };
     create("/cashFlow/searchCashFlows", input).then((response) => {
       // Assuming the formatted data is stored in an array called 'formattedData'
@@ -391,7 +406,7 @@ export default function AddCashFlow(props) {
       const distinctFunds = [];
       const resultPort = [];
       const resultFund = [];
-  
+
       // Iterate over each record in the data array
       for (let i = 0; i < response.length; i++) {
         const record = response[i];
@@ -411,28 +426,28 @@ export default function AddCashFlow(props) {
           distinctFunds.push(fund);
         }
       }
-  
+
       //resultFund.sort((a, b) => a.FundType.localeCompare(b.FundType))
-        resultPort.sort((a, b) => a.PortCoName.localeCompare(b.PortCoName))
-        resultFund.sort((a, b) => a.FundType.localeCompare(b.FundType))  
-        let testPortCos = resultPort.map((resP) => (
-          <MenuItem value={resP.PortCoId}>{resP.PortCoName}</MenuItem>
-        ));
+      resultPort.sort((a, b) => a.PortCoName.localeCompare(b.PortCoName))
+      resultFund.sort((a, b) => a.FundType.localeCompare(b.FundType))
+      let testPortCos = resultPort.map((resP) => (
+        <MenuItem value={resP.PortCoId}>{resP.PortCoName}</MenuItem>
+      ));
 
-        let testfundTypes = resultFund.map((resFund) => (
-          <MenuItem value={resFund.FundId}>
-            {resFund.FundType}
-          </MenuItem>
-        ));
+      let testfundTypes = resultFund.map((resFund) => (
+        <MenuItem value={resFund.FundId}>
+          {resFund.FundType}
+        </MenuItem>
+      ));
 
-  // The 'result' array now contains only one row of each distinct fund
+      // The 'result' array now contains only one row of each distinct fund
       setCashFlowDetails({
-      ...cashFlowDetails,
-      [name]: value,
-      ["portCos"]: testPortCos,
-      ["fundTypes"]: testfundTypes
+        ...cashFlowDetails,
+        [name]: value,
+        ["portCos"]: testPortCos,
+        ["fundTypes"]: testfundTypes
+      });
     });
-  });
 
     switch (name) {
       case "PortCoId":
@@ -578,15 +593,15 @@ export default function AddCashFlow(props) {
             </Grid>
           </Grid>
           <Grid container spacing={2}>
-          <Grid item xs={12}>
-          <Button 
-              onClick={handleUpdates}
-              fullWidth
-              color="primary"
-              className={classes.customButtonPrimary}
-              //disabled={!cashFlowDetails.disable}
-              size="medium"> {buttonText} </Button>
-              </Grid>
+            <Grid item xs={12}>
+              <Button
+                onClick={handleUpdates}
+                fullWidth
+                color="primary"
+                className={classes.customButtonPrimary}
+                //disabled={!cashFlowDetails.disable}
+                size="medium"> {buttonText} </Button>
+            </Grid>
             <Grid item xs={12}>
               <FormControl fullWidth variant="outlined" required size="small">
                 <InputLabel
